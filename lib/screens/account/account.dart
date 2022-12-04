@@ -2,10 +2,12 @@ import 'package:easyfit_app/components/drawer/custom_drawer.dart';
 import 'package:easyfit_app/components/text_components.dart';
 import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:easyfit_app/helper/preference/preference_manager.dart';
+import 'package:easyfit_app/helper/state/state_manager.dart';
 import 'package:easyfit_app/screens/account/edit_profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/instance_manager.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class Account extends StatelessWidget {
@@ -13,6 +15,7 @@ class Account extends StatelessWidget {
   Account({Key? key, required this.manager}) : super(key: key);
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _controller = Get.find<StateController>();
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,7 @@ class Account extends StatelessWidget {
             IconButton(
               onPressed: () {
                 // Navigator.of(context).pop();
+                _controller.jumpTo(0);
               },
               icon: const Icon(
                 CupertinoIcons.arrow_left_circle_fill,
@@ -85,7 +89,7 @@ class Account extends StatelessWidget {
           ),
           Center(
             child: TextPoppins(
-              text: "Arinola Odunuga",
+              text: "${_controller.currentUser!.displayName}",
               fontSize: 19,
               fontWeight: FontWeight.bold,
               color: Colors.black,
@@ -101,12 +105,15 @@ class Account extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextPoppins(text: "Email", fontSize: 14),
-                TextPoppins(text: "demouser@email.com", fontSize: 16),
+                TextPoppins(
+                    text: "${_controller.currentUser!.email}", fontSize: 16),
                 const SizedBox(
                   height: 10,
                 ),
                 TextPoppins(text: "Phone", fontSize: 14),
-                TextPoppins(text: "0901234567895", fontSize: 16),
+                TextPoppins(
+                    text: "${_controller.currentUser!.phoneNumber}",
+                    fontSize: 16),
                 const SizedBox(
                   height: 10,
                 ),

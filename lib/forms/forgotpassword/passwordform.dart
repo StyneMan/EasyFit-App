@@ -80,7 +80,7 @@ class _PasswordFormState extends State<PasswordForm> {
                     PageTransition(
                       type: PageTransitionType.size,
                       alignment: Alignment.bottomCenter,
-                      child: const VerifyOTP(
+                      child: VerifyOTP(
                         caller: "Password",
                       ),
                     ),

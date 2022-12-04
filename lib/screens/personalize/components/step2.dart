@@ -28,9 +28,8 @@ class _AccountStep2State extends State<AccountStep2> {
     });
   }
 
-  _check() {
-    bool result = _selections.isNotEmpty;
-    widget.isAnyChecked(result);
+  _check(value) {
+    widget.isAnyChecked(value);
   }
 
   @override
@@ -92,7 +91,7 @@ class _AccountStep2State extends State<AccountStep2> {
               isSelected: [_selections[widget.key]],
               onPressed: (int index) => setState(() {
                 _selections[widget.key] = !_selections[widget.key];
-                _check();
+                _check(_selections[widget.key]);
               }),
               children: [widget.value],
             );

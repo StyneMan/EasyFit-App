@@ -35,38 +35,40 @@ class _CustomDrawerState extends State<CustomDrawer> {
     if (_isLoggedIn) {
       setState(() {
         drawerList = [
-          DrawerModel(
-            icon: 'assets/images/home_drawer.svg',
-            title: 'Home',
-            isAction: false,
-            widget: Home(
-                // manager: widget.manager,
-                ),
-          ),
-          DrawerModel(
-            icon: 'assets/images/orders_drawer.svg',
-            title: 'Orders',
-            isAction: false,
-            widget: Orders(
-              manager: widget.manager,
-            ),
-          ),
-          DrawerModel(
-            icon: 'assets/images/atls_drawer.svg',
-            title: 'ATLs',
-            isAction: true,
-          ),
-          DrawerModel(
-            icon: 'assets/images/marketers_drawer.svg',
-            title: 'Marketers',
-            isAction: false,
-            widget: const Marketers(),
-          ),
+          // DrawerModel(
+          //   icon: 'assets/images/home_drawer.svg',
+          //   title: 'Home',
+          //   isAction: false,
+          //   widget: Home(
+          //       // manager: widget.manager,
+          //       ),
+          // ),
+          // DrawerModel(
+          //   icon: 'assets/images/orders_drawer.svg',
+          //   title: 'Orders',
+          //   isAction: false,
+          //   widget: Orders(
+          //     manager: widget.manager,
+          //   ),
+          // ),
+          // DrawerModel(
+          //   icon: 'assets/images/atls_drawer.svg',
+          //   title: 'ATLs',
+          //   isAction: true,
+          // ),
+          // DrawerModel(
+          //   icon: 'assets/images/marketers_drawer.svg',
+          //   title: 'Marketers',
+          //   isAction: false,
+          //   widget: const Marketers(),
+          // ),
           DrawerModel(
             icon: 'assets/images/meal_plan_drawer.svg',
             title: 'Meal Plans',
             isAction: false,
-            widget: MealPlan(),
+            widget: MealPlan(
+              manager: widget.manager,
+            ),
           ),
           DrawerModel(
             icon: 'assets/images/maccount_drawer.svg',
@@ -149,32 +151,33 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.6),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                  padding: const EdgeInsets.only(
-                      top: 32.0, left: 24, right: 24, bottom: 1),
-                  color: Constants.primaryColor,
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.175,
-                  child: Center(
-                    child: TextPoppins(
-                      text: "Menu",
-                      fontSize: 18,
-                      color: Colors.black,
-                      align: TextAlign.center,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  )),
-              Expanded(
-                child: Container(
+      padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.33),
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    padding: const EdgeInsets.only(
+                        top: 32.0, left: 24, right: 24, bottom: 1),
+                    width: double.infinity,
+                    color: Colors.white,
+                    height: MediaQuery.of(context).size.height * 0.175,
+                    child: Center(
+                      child: TextPoppins(
+                        text: "Menu",
+                        fontSize: 18,
+                        color: Colors.black,
+                        align: TextAlign.center,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )),
+                Container(
                   color: Colors.white,
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16.0),
@@ -188,9 +191,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           children: [
                             SvgPicture.asset(
                               drawerList[i].icon,
+                              width: 24,
                             ),
                             const SizedBox(
-                              width: 16.0,
+                              width: 21.0,
                             ),
                             TextPoppins(
                               text: drawerList[i].title,
@@ -208,36 +212,41 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     itemCount: drawerList.length,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-          Container(
-            padding: const EdgeInsets.all(10.0),
-            child: Center(
-              child: TextButton(
-                onPressed: () {},
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    TextPoppins(
-                      text: "LOG OUT",
-                      fontSize: 14,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(
-                      width: 4.0,
-                    ),
-                    const Icon(Icons.logout_rounded)
-                  ],
+              ],
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Container(
+              padding: const EdgeInsets.all(10.0),
+              width: MediaQuery.of(context).size.width * 0.40,
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextPoppins(
+                        text: "LOG OUT",
+                        fontSize: 14,
+                        align: TextAlign.center,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(
+                        width: 4.0,
+                      ),
+                      const Icon(Icons.logout_rounded)
+                    ],
+                  ),
                 ),
               ),
             ),
-          )
-        ],
+            const SizedBox(
+              height: 21,
+            ),
+          ],
+        ),
       ),
     );
   }

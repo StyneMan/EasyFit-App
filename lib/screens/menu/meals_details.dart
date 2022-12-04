@@ -89,6 +89,7 @@ class MealsDetails extends StatelessWidget {
         ),
         shrinkWrap: true,
         itemBuilder: (context, index) => ProductCard(
+          manager: manager,
           product: productList[index],
         ),
         itemCount: productList.length,

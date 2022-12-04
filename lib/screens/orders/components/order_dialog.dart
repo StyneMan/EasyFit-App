@@ -36,14 +36,19 @@ class OrderDialog extends StatelessWidget {
                 top: -2,
                 right: -2,
                 child: ClipOval(
-                  child: Container(
-                    width: 36,
-                    height: 36,
-                    color: Colors.red,
-                    child: const Center(
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.black,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      color: Colors.red,
+                      child: const Center(
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),

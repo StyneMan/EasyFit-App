@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
+// import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:easyfit_app/screens/home/home.dart';
 
 class StateController extends GetxController {
@@ -9,7 +12,12 @@ class StateController extends GetxController {
   var isLoading = false.obs;
   var isAuthenticated = false.obs;
   var hideNavbar = false.obs;
+  var showPlan = true.obs;
   var hasInternetAccess = true.obs;
+
+  var currentUser = FirebaseAuth.instance.currentUser;
+
+  var tabController = PersistentTabController(initialIndex: 0);
 
   var productsData = "".obs;
 
@@ -59,20 +67,16 @@ class StateController extends GetxController {
     hasInternetAccess.value = state;
   }
 
+  void setShowPlan(bool state) {
+    showPlan.value = state;
+  }
+
   void setProductsData(String state) {
     productsData.value = state;
   }
 
-  void selectTab(var currPage, String tabItem, int index) {
-    if (tabItem == currentPage) {
-      navigatorKeys[tabItem]!.currentState?.popUntil((route) => route.isFirst);
-      currentScreen = currPage;
-      selectedIndex.value = index;
-    } else {
-      currentPage = pageKeys[index];
-      selectedIndex.value = index;
-      currentScreen = currPage;
-    }
+  void jumpTo(int pos) {
+    tabController.jumpToTab(pos);
   }
 
   void setLoading(bool state) {

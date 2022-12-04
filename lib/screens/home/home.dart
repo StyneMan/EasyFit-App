@@ -3,6 +3,7 @@ import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:easyfit_app/helper/preference/preference_manager.dart';
 import 'package:easyfit_app/screens/home/components/banner.dart';
 import 'package:easyfit_app/screens/home/components/productsection.dart';
+import 'package:easyfit_app/screens/plan/components/plan_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -88,7 +89,9 @@ class Home extends StatelessWidget {
           const SizedBox(
             height: 21.0,
           ),
-          const ProductSection()
+          ProductSection(
+            manager: manager!,
+          )
         ],
       ),
     );

@@ -33,7 +33,7 @@ class EditProfile extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
-                // Navigator.of(context).pop();
+                Navigator.of(context).pop();
               },
               icon: const Icon(
                 CupertinoIcons.arrow_left_circle_fill,

@@ -2,10 +2,13 @@ import 'package:easyfit_app/components/dashboard/dashboard.dart';
 import 'package:easyfit_app/components/text_components.dart';
 import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:easyfit_app/helper/preference/preference_manager.dart';
+import 'package:easyfit_app/helper/state/state_manager.dart';
 import 'package:easyfit_app/screens/auth/forgotPass/forgotPass.dart';
 import 'package:easyfit_app/screens/home/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
 import 'package:page_transition/page_transition.dart';
 
 class LoginForm extends StatefulWidget {
@@ -24,11 +27,36 @@ class _LoginFormState extends State<LoginForm> {
   bool _obscureText = true;
 
   final _formKey = GlobalKey<FormState>();
+  final _controller = Get.find<StateController>();
 
   _togglePass() {
     setState(() {
       _obscureText = !_obscureText;
     });
+  }
+
+  _login() async {
+    _controller.setLoading(true);
+    try {
+      final resp = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      widget.manager.setIsLoggedIn(true);
+
+      Navigator.of(context).pushReplacement(
+        PageTransition(
+          type: PageTransitionType.size,
+          alignment: Alignment.bottomCenter,
+          child: Dashboard(
+            manager: widget.manager,
+          ),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+      Constants.toast("${e.message}");
+    }
   }
 
   @override
@@ -65,15 +93,24 @@ class _LoginFormState extends State<LoginForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your email';
+                return 'Please enter your email or phone';
               }
-              if (!RegExp('^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]')
-                  .hasMatch(value)) {
-                return 'Please enter a valid email';
+              //if email
+              if (value.contains(RegExp(r'[a-z]'))) {
+                //Email is entere now check if the email is valid
+                if (!RegExp('^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]')
+                    .hasMatch(value)) {
+                  return 'Please enter a valid email';
+                }
+              } else {
+                if (value.length < 11) {
+                  return "Please enter a valid phone number";
+                }
               }
+
               return null;
             },
-            keyboardType: TextInputType.emailAddress,
+            keyboardType: TextInputType.text,
             controller: _emailController,
           ),
           const SizedBox(
@@ -158,15 +195,16 @@ class _LoginFormState extends State<LoginForm> {
             ),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushReplacement(
-                  PageTransition(
-                    type: PageTransitionType.size,
-                    alignment: Alignment.bottomCenter,
-                    child: Dashboard(
-                      manager: widget.manager,
-                    ),
-                  ),
-                );
+                _login();
+                // Navigator.of(context).pushReplacement(
+                //   PageTransition(
+                //     type: PageTransitionType.size,
+                //     alignment: Alignment.bottomCenter,
+                //     child: Dashboard(
+                //       manager: widget.manager,
+                //     ),
+                //   ),
+                // );
               },
               child: TextPoppins(
                 text: "Signin",

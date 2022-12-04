@@ -18,7 +18,7 @@ class OrdersRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(21.0)),
@@ -109,7 +109,18 @@ class OrdersRow extends StatelessWidget {
                     width: 10.0,
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      showDialog<String>(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (BuildContext context) => AlertDialog(
+                          contentPadding: const EdgeInsets.all(0.0),
+                          content: OrderDialog(
+                            order: order,
+                          ),
+                        ),
+                      );
+                    },
                     child: Container(
                       height: 24,
                       padding: const EdgeInsets.all(1.5),

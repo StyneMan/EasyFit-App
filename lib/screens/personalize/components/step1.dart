@@ -18,8 +18,8 @@ class AccountStep1 extends StatefulWidget {
 }
 
 class _AccountStep1State extends State<AccountStep1> {
-  bool _isActive = false;
-
+  bool _isActive = false, _showTextField = false;
+  final _othersController = TextEditingController();
   List<bool> _selections =
       List.generate((personalizeList.length), (_) => false);
 
@@ -27,12 +27,12 @@ class _AccountStep1State extends State<AccountStep1> {
     setState(() {
       _isActive = value;
     });
+    widget.isAnyChecked(value);
     // print("CURR:: $value");
   }
 
-  _check() {
-    bool result = _selections.isNotEmpty;
-    widget.isAnyChecked(result);
+  _check(value) {
+    widget.isAnyChecked(value);
   }
 
   @override
@@ -82,30 +82,38 @@ class _AccountStep1State extends State<AccountStep1> {
               isSelected: [_selections[widget.key]],
               onPressed: (int index) => setState(() {
                 _selections[widget.key] = !_selections[widget.key];
-                _check();
+                _check(_selections[widget.key]);
+                if (index == (personalizeList.length - 1) ||
+                    _selections[personalizeList.length - 1]) {
+                  setState(() {
+                    _showTextField = true;
+                  });
+                }
               }),
               children: [widget.value],
             );
           }).toList(),
         ),
-        // ToggleButtons(children: children, isSelected: isSelected, )
-        // GridView.builder(
-        //   shrinkWrap: true,
-        //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        //     crossAxisCount: 2,
-        //     mainAxisSpacing: 16.0,
-        //     crossAxisSpacing: 16.0,
-        //     childAspectRatio: (itemWidth / itemHeight),
-        //   ),
-        //   itemBuilder: (context, i) {
-        //     return CheckButton(
-        //       onChanged: onChanged,
-        //       title: personalizeList[i],
-        //       isActive: _isActive,
-        //     );
-        //   },
-        //   itemCount: personalizeList.length,
-        // )
+        const SizedBox(
+          height: 8.0,
+        ),
+        _showTextField
+            ? TextFormField(
+                controller: _othersController,
+                keyboardType: TextInputType.name,
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(
+                  filled: false,
+                  hintText: 'Please specify',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Field must not be empty!';
+                  }
+                  return null;
+                },
+              )
+            : const SizedBox()
       ],
     );
   }

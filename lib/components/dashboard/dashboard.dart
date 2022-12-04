@@ -6,6 +6,7 @@ import 'package:easyfit_app/screens/home/home.dart';
 import 'package:easyfit_app/screens/menu/menu.dart';
 import 'package:easyfit_app/screens/network/no_internet.dart';
 import 'package:easyfit_app/screens/orders/orders.dart';
+import 'package:easyfit_app/screens/plan/components/plan_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -30,6 +31,20 @@ class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime pre_backpress = DateTime.now();
+
+    if (_controller.showPlan.value) {
+      Future.delayed(const Duration(seconds: 2), () {
+        showDialog<String>(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            content: PlanDialog(
+              manager: manager,
+            ),
+          ),
+        );
+      });
+    }
 
     return WillPopScope(
       onWillPop: () async {
@@ -75,7 +90,7 @@ class Dashboard extends StatelessWidget {
                     context,
                     screens: _buildScreens(_isLoggedIn),
                     items: _navBarsItems(),
-
+                    controller: _controller.tabController,
                     confineInSafeArea: true,
                     handleAndroidBackButtonPress: false, // Default is true.
                     resizeToAvoidBottomInset:
