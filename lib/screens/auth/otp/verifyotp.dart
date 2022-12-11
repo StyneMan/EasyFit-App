@@ -10,11 +10,13 @@ import 'package:easyfit_app/screens/auth/resetpass/resetpass.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
+import 'package:flutter_countdown_timer/current_remaining_time.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:get/get.dart';
 import 'package:loading_overlay_pro/loading_overlay_pro.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:sms_autofill/sms_autofill.dart';
 
 typedef void InitCallback(params);
 
@@ -40,11 +42,12 @@ class VerifyOTP extends StatefulWidget {
 }
 
 class _State extends State<VerifyOTP> {
-  bool _isLoading = false;
   final _controller = Get.find<StateController>();
   final _otpController = TextEditingController();
   PreferenceManager? _manager;
   String _code = '';
+  CountdownTimerController? _timerController;
+  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 60 * 5;
 
   @override
   void initState() {
@@ -52,33 +55,39 @@ class _State extends State<VerifyOTP> {
     _manager = PreferenceManager(context);
   }
 
-  _resendCode() {
-    setState(() {
-      _isLoading = true;
-    });
-    Future.delayed(const Duration(seconds: 5), () {
-      setState(() {
-        _isLoading = false;
-      });
+  _resendCode() async {
+    _controller.setLoading(true);
+    try {
+      FirebaseAuth _auth = FirebaseAuth.instance;
+      await _auth.verifyPhoneNumber(
+        phoneNumber: "${widget.phone}",
+        verificationCompleted: (PhoneAuthCredential credential) {
+          _controller.setLoading(false);
+          // resp.user!.updatePhoneNumber(credential);
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          _controller.setLoading(false);
+          if (e.code == 'invalid-phone-number') {
+            print('The provided phone number is not valid.');
+            Constants.toast('The provided phone number is not valid.');
+          } else {
+            print("${e.code} - ${e.message}");
+            Constants.toast('${e.message}');
+          }
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          _controller.setLoading(false);
+          //show dialog to take input from the user
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          _controller.setLoading(false);
+        },
+      );
 
-      if (widget.caller == "Password") {
-        Navigator.of(context).push(
-          PageTransition(
-            type: PageTransitionType.size,
-            alignment: Alignment.bottomCenter,
-            child: const ResetPassword(),
-          ),
-        );
-      } else {
-        Navigator.of(context).push(
-          PageTransition(
-            type: PageTransitionType.size,
-            alignment: Alignment.bottomCenter,
-            child: const AccountSuccess(),
-          ),
-        );
-      }
-    });
+      _controller.setLoading(false);
+    } catch (e) {
+      _controller.setLoading(false);
+    }
   }
 
   _linkAccount() async {
@@ -123,20 +132,26 @@ class _State extends State<VerifyOTP> {
       _controller.setLoading(false);
       switch (e.code) {
         case "provider-already-linked":
-          print("The provider has already been linked to the user.");
+          Constants.toast("The provider has already been linked to the user.");
           break;
         case "invalid-credential":
-          print("The provider's credential is not valid.");
+          Constants.toast("The provider's credential is not valid.");
           break;
         case "credential-already-in-use":
-          print("The account corresponding to the credential already exists, "
-              "or is already linked to a Firebase User.");
+          Constants.toast(
+              "Credential associated with a different user account. Use another phone number");
           break;
         // See the API reference for the full list of error codes.
         default:
-          print("Unknown error.");
+          Constants.toast("${e.message}");
       }
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timerController?.dispose();
   }
 
   @override
@@ -182,7 +197,7 @@ class _State extends State<VerifyOTP> {
                       ),
                       TextPoppins(
                         text:
-                            "Please type the 6 digit OTP code sent to your phone.",
+                            "Please type the 6 digit OTP code sent to ${widget.phone}.",
                         fontSize: 14,
                         align: TextAlign.center,
                       ),
@@ -232,14 +247,8 @@ class _State extends State<VerifyOTP> {
                         onCompleted: (v) {
                           debugPrint("Completed");
                         },
-                        // onTap: () {
-                        //   print("Pressed");
-                        // },
                         onChanged: (value) {
                           debugPrint(value);
-                          // setState(() {
-                          //   currentText = value;
-                          // });
                         },
                         beforeTextPaste: (text) {
                           debugPrint("Allowing to paste $text");
@@ -248,66 +257,45 @@ class _State extends State<VerifyOTP> {
                           return true;
                         },
                       ),
-                      // PinFieldAutoFill(
-                      //   decoration: UnderlineDecoration(
-                      //     textStyle: const TextStyle(
-                      //       fontSize: 20,
-                      //       color: Colors.black,
-                      //     ),
-                      //     colorBuilder: FixedColorBuilder(
-                      //       Colors.black.withOpacity(0.3),
-                      //     ),
-                      //   ),
-                      //   currentCode: _code,
-                      //   controller: _otpController,
-                      //   onCodeSubmitted: (code) {
-                      //     // _linkAccount();
-                      //   },
-                      //   onCodeChanged: (code) {
-                      //     if (code!.length == 6) {
-                      //       FocusScope.of(context).requestFocus(FocusNode());
-                      //     }
-                      //   },
-                      // ),
-
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.center,
-                      //   crossAxisAlignment: CrossAxisAlignment.center,
-                      //   children: [
-                      //     _textFieldOTP(first: true, last: false, index: 0),
-                      //     const SizedBox(
-                      //       width: 10.0,
-                      //     ),
-                      //     _textFieldOTP(first: false, last: false, index: 1),
-                      //     const SizedBox(
-                      //       width: 10.0,
-                      //     ),
-                      //     _textFieldOTP(first: false, last: false, index: 2),
-                      //     const SizedBox(
-                      //       width: 10.0,
-                      //     ),
-                      //     _textFieldOTP(first: false, last: false, index: 3),
-                      //     const SizedBox(
-                      //       width: 10.0,
-                      //     ),
-                      //     _textFieldOTP(first: false, last: false, index: 4),
-                      //     const SizedBox(
-                      //       width: 10.0,
-                      //     ),
-                      //     _textFieldOTP(first: false, last: true, index: 5),
-                      //   ],
-                      // ),
-                      // TextButton(
-                      //   onPressed: () {},
-                      //   child: Text("Resend code in 01:34"),
-                      // ),
                       const SizedBox(
                         height: 16,
                       ),
+                      CountdownTimer(
+                        controller: _timerController,
+                        endTime: endTime,
+                        widgetBuilder: (_, CurrentRemainingTime? time) {
+                          if (time == null) {
+                            return TextButton(
+                              onPressed: () {
+                                _timerController?.start();
+                                _resendCode();
+                              },
+                              child: TextPoppins(
+                                text: 'Resend OTP',
+                                fontSize: 18,
+                                align: TextAlign.center,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.all(12.0),
+                              ),
+                            );
+                            //Text('Game over');
+                          }
+                          return TextPoppins(
+                            text:
+                                'Resend code in ${time.min ?? "0"} : ${time.sec}',
+                            fontSize: 15,
+                            align: TextAlign.center,
+                            color: Constants.primaryColor,
+                          );
+                        },
+                      ),
+                      const SizedBox(
+                        height: 16.0,
+                      ),
                       ElevatedButton(
                         onPressed: () {
-                          // _resendCode();
-                          // _linkAccount();
                           if (widget.caller == "Password") {
                             Navigator.of(context).push(
                               PageTransition(
@@ -354,82 +342,4 @@ class _State extends State<VerifyOTP> {
       ),
     );
   }
-
-  // Widget _textFieldOTP({required bool first, last, required int index}) {
-  //   return Container(
-  //     height: MediaQuery.of(context).size.height * 0.15,
-  //     child: AspectRatio(
-  //       aspectRatio: 0.4,
-  //       child: TextField(
-  //         autofocus: true,
-  //         onChanged: (value) {
-  //           print('Curr index $index $value');
-
-  //           if (value.length == 1 && last == false) {
-  //             FocusScope.of(context).nextFocus();
-  //           }
-  //           if (value.length == 0 && first == false) {
-  //             FocusScope.of(context).previousFocus();
-  //           }
-
-  //           if (first == true) {
-  //             setState(() {
-  //               num1 = value;
-  //             });
-  //           }
-  //           if (index == 1) {
-  //             setState(() {
-  //               num2 = value;
-  //             });
-  //           }
-  //           if (index == 2) {
-  //             setState(() {
-  //               num3 = value;
-  //             });
-  //           }
-  //           if (index == 3) {
-  //             setState(() {
-  //               num4 = value;
-  //             });
-  //           }
-  //           if (index == 4) {
-  //             setState(() {
-  //               num5 = value;
-  //             });
-  //           }
-  //           // else if (index == 1 && value.length == 1) {
-  //           //   _otpList.add(value);
-  //           // }
-  //           if (value.length == 1 && last == true) {
-  //             setState(() {
-  //               num6 = value;
-  //             });
-
-  //             widget.onEntered!("$num1$num2$num3$num4$num5$num6");
-
-  //             // _triggerVerify(num1!, num2!, num3!, num4!);
-  //           }
-  //         },
-  //         showCursor: false,
-  //         readOnly: false,
-  //         textAlign: TextAlign.center,
-  //         style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-  //         keyboardType: TextInputType.number,
-  //         maxLength: 1,
-  //         decoration: const InputDecoration(
-  //           counter: Offstage(),
-  //           enabledBorder: UnderlineInputBorder(
-  //             borderSide: BorderSide(width: 2, color: Colors.black12),
-  //           ),
-  //           focusedBorder: UnderlineInputBorder(
-  //             borderSide: BorderSide(
-  //               width: 2,
-  //               color: Color(0xFF197F8A),
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 }

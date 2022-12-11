@@ -3,10 +3,13 @@ import 'package:easyfit_app/components/text_components.dart';
 import 'package:easyfit_app/data/products/products.dart';
 import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:easyfit_app/helper/preference/preference_manager.dart';
+import 'package:easyfit_app/screens/cart/cart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get_utils/src/extensions/string_extensions.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 
 class ProductDetail extends StatefulWidget {
@@ -63,6 +66,43 @@ class _ProductDetailState extends State<ProductDetail> {
         ),
         centerTitle: true,
         actions: [
+          IconButton(
+            onPressed: () {
+              pushNewScreen(
+                context,
+                withNavBar: true,
+                screen: Cart(manager: widget.manager),
+              );
+            },
+            icon: Stack(
+              children: [
+                const Icon(
+                  CupertinoIcons.cart,
+                  color: Constants.secondaryColor,
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: ClipOval(
+                    child: Container(
+                      width: 14.0,
+                      height: 14.0,
+                      decoration: BoxDecoration(
+                        color: Constants.secondaryColor,
+                        borderRadius: BorderRadius.circular(7.0),
+                      ),
+                      child: TextPoppins(
+                        text: "2",
+                        align: TextAlign.center,
+                        fontSize: 10,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           IconButton(
             onPressed: () {
               if (!_scaffoldKey.currentState!.isEndDrawerOpen) {
@@ -141,7 +181,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               width: 8.0,
                             ),
                             Text(
-                              "${Constants.nairaSign(context).currencySymbol} ${Constants.formatMoney(widget.product.price)}",
+                              "${Constants.nairaSign(context).currencySymbol}${Constants.formatMoney(widget.product.price)}",
                               style: const TextStyle(
                                 color: Constants.primaryColor,
                                 fontSize: 20,
@@ -150,10 +190,112 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 24.0),
+                        const SizedBox(height: 21.0),
                         TextPoppins(
                           text: widget.product.description,
                           fontSize: 14,
+                        ),
+                        const SizedBox(
+                          height: 18,
+                        ),
+                        const Text(
+                          "Ingredients",
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            fontFamily: 'Poppins',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Constants.primaryColor,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 5.0,
+                        ),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, i) => TextPoppins(
+                            text: widget.product.ingredients[i].capitalize!,
+                            fontSize: 14,
+                          ),
+                          itemCount: widget.product.ingredients.length,
+                        ),
+                        const SizedBox(
+                          height: 8.0,
+                        ),
+                        const Divider(),
+                        const SizedBox(
+                          height: 8.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            TextPoppins(
+                              text: "Calories",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Constants.primaryColor,
+                            ),
+                            TextPoppins(
+                              text: "${widget.product.calories}",
+                              fontSize: 14,
+                            ),
+                          ],
+                        ),
+                        const Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            TextPoppins(
+                              text: "Carbs",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Constants.primaryColor,
+                            ),
+                            TextPoppins(
+                              text: "${widget.product.carbs}",
+                              fontSize: 14,
+                            ),
+                          ],
+                        ),
+                        const Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            TextPoppins(
+                              text: "Proteins",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Constants.primaryColor,
+                            ),
+                            TextPoppins(
+                              text: "${widget.product.proteins}",
+                              fontSize: 14,
+                            ),
+                          ],
+                        ),
+                        const Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            TextPoppins(
+                              text: "Fat",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Constants.primaryColor,
+                            ),
+                            TextPoppins(
+                              text: "${widget.product.fat}",
+                              fontSize: 14,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 60 + kToolbarHeight,
                         ),
                       ],
                     ),
@@ -207,7 +349,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               child: ElevatedButton(
                                 onPressed: () {},
                                 child: TextPoppins(
-                                  text: "Add to order",
+                                  text: "Add to cart",
                                   fontSize: 16,
                                 ),
                                 style: ElevatedButton.styleFrom(

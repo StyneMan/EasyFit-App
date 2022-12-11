@@ -48,4 +48,5 @@ List<String> weekDays = [
   "Thursday",
   "Friday",
   "Saturday",
+  "Sunday"
 ];

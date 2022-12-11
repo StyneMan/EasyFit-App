@@ -14,12 +14,53 @@ import 'package:easyfit_app/screens/onboarding/onboarding.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+
+enum Version { lazy, wait }
+// Cmd-line args/Env vars: https://stackoverflow.com/a/64686348/2301224
+const String version = String.fromEnvironment('VERSION');
+const Version running = version == "lazy" ? Version.lazy : Version.wait;
+
+class GlobalBindings extends Bindings {
+  // final LocalDataProvider _localDataProvider = LocalDataProvider();
+  @override
+  void dependencies() {
+    Get.lazyPut<StateController>(() => StateController(), fenix: true);
+    // Get.put<StateController>(StateController(), permanent: true);
+    // Get.put<LocalDataProvider>(_localDataProvider, permanent: true);
+    // Get.put<LocalDataSource>(LocalDataSource(_localDataProvider),
+    // permanent: true);
+  }
+}
+
+/// Calling [await] dependencies(), your app will wait until dependencies are loaded.
+class AwaitBindings extends Bindings {
+  @override
+  Future<void> dependencies() async {
+    await Get.putAsync<StateController>(() async {
+      Dao _dao = await Dao.createAsync();
+      return StateController(myDao: _dao);
+    });
+  }
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  // GlobalBindings().dependencies();
+  // Get.put(StateController());
+
+  //WidgetsFlutterBinding.ensureInitialized(); // if needed for resources
+  // if (running == Version.lazy) {
+  print('running LAZY version');
+  GlobalBindings().dependencies();
+  // }
+
+  // if (running == Version.wait) {
+  //   print('running AWAIT version');
+  //   await AwaitBindings().dependencies(); // await is key here
+  // }
 
   // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
   //     overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top]);
@@ -29,12 +70,7 @@ Future<void> main() async {
   // ));
 
   runApp(
-    MaterialApp(
-      title: 'EasyFit',
-      debugShowCheckedModeBanner: false,
-      theme: appTheme,
-      home: MyApp(),
-    ),
+    MyApp(),
   );
 }
 
@@ -46,7 +82,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _isLoggedIn = false;
   final _controller = Get.put(StateController());
   Widget? component;
   PreferenceManager? _manager;
@@ -135,5 +170,26 @@ class Init {
 
   Future initialize() async {
     await Future.delayed(const Duration(seconds: 3));
+  }
+}
+
+class Dao {
+  String dbValue = "";
+
+  Dao._privateConstructor();
+
+  static Future<Dao> createAsync() async {
+    var dao = Dao._privateConstructor();
+    print('Dao.createAsync() called');
+    return dao._initAsync();
+  }
+
+  /// Simulates a long-loading process such as remote DB connection or device
+  /// file storage access.
+  Future<Dao> _initAsync() async {
+    dbValue =
+        await Future.delayed(const Duration(seconds: 5), () => 'Some DB data');
+    print('Dao._initAsync done');
+    return this;
   }
 }

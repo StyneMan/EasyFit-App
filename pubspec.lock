@@ -92,6 +92,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
+  confetti:
+    dependency: "direct main"
+    description:
+      name: confetti
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.0"
   country_code_picker:
     dependency: "direct main"
     description:
@@ -251,6 +258,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_countdown_timer:
+    dependency: "direct main"
+    description:
+      name: flutter_countdown_timer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.1.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -270,6 +284,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_time_picker_spinner:
+    dependency: "direct main"
+    description:
+      name: flutter_time_picker_spinner
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter

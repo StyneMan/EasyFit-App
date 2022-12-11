@@ -49,6 +49,9 @@ dependencies:
   country_code_picker: ^2.0.2
   sms_autofill: ^2.2.0
   pin_code_fields: ^7.4.0
+  confetti: ^0.6.0
+  flutter_countdown_timer: ^4.1.0
+  flutter_time_picker_spinner: ^2.0.0
   
   firebase_core: ^1.11.0
   firebase_auth: ^3.3.7

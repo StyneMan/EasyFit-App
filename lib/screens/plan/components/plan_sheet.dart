@@ -9,9 +9,17 @@ import 'package:get/instance_manager.dart';
 
 class PlanBottomSheet extends StatelessWidget {
   final PreferenceManager manager;
+  final List<Map<String, dynamic>> mealsArr;
+  String totalMeal;
+  final List<dynamic> selectedDays;
+  int selectedPlan;
   PlanBottomSheet({
     Key? key,
     required this.manager,
+    required this.mealsArr,
+    required this.totalMeal,
+    required this.selectedPlan,
+    required this.selectedDays,
   }) : super(key: key);
 
   final _controller = Get.find<StateController>();
@@ -30,14 +38,13 @@ class PlanBottomSheet extends StatelessWidget {
                 height: 8.0,
               ),
               TextPoppins(
-                text: "Customize your plan",
+                text: "Plan summary",
                 fontSize: 21,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
               TextPoppins(
-                text:
-                    "Below is a summary of your food plan if you would like to make any changes, you can go back.",
+                text: "Below is the summary of your plan",
                 fontSize: 14,
               ),
             ],
@@ -58,7 +65,7 @@ class PlanBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   TextPoppins(
-                    text: "Delivery Frequency",
+                    text: "Selected plan",
                     fontSize: 13,
                     color: Colors.black,
                   ),
@@ -66,7 +73,7 @@ class PlanBottomSheet extends StatelessWidget {
                     width: 4.0,
                   ),
                   TextPoppins(
-                    text: "twice a week",
+                    text: "$selectedPlan days plan",
                     color: Colors.black,
                     fontSize: 13,
                   ),
@@ -80,18 +87,30 @@ class PlanBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   TextPoppins(
-                    text: "Meals Per Delivery",
+                    text: "Selected days",
                     fontSize: 13,
                     color: Colors.black,
                   ),
                   const SizedBox(
                     width: 4.0,
                   ),
-                  TextPoppins(
-                    text: "4",
-                    color: Colors.black,
-                    fontSize: 13,
-                  ),
+                  Center(
+                    child: SizedBox(
+                      height: 21,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: selectedDays.length,
+                        itemBuilder: (context, index) => TextPoppins(
+                          text: "${selectedDays[index]}".substring(0, 3) +
+                              "${index == (selectedDays.length - 1) ? "" : ", "}",
+                          color: Colors.black,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
               const SizedBox(
@@ -102,7 +121,7 @@ class PlanBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   TextPoppins(
-                    text: "Delivery Days",
+                    text: "Total meals",
                     fontSize: 13,
                     color: Colors.black,
                   ),
@@ -110,7 +129,7 @@ class PlanBottomSheet extends StatelessWidget {
                     width: 4.0,
                   ),
                   TextPoppins(
-                    text: "Mon & Wed",
+                    text: totalMeal,
                     color: Colors.black,
                     fontSize: 13,
                   ),
@@ -132,13 +151,14 @@ class PlanBottomSheet extends StatelessWidget {
                   const SizedBox(
                     width: 4.0,
                   ),
-                  TextPoppins(
-                    text:
-                        "${Constants.nairaSign(context).currencySymbol}80,000/4 weeks",
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  Text(
+                    "${Constants.nairaSign(context).currencySymbol}80,000/4 weeks",
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
                 ],
               ),
             ],
@@ -153,7 +173,7 @@ class PlanBottomSheet extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
-              Future.delayed(const Duration(seconds: 1), () {
+              Future.delayed(const Duration(milliseconds: 300), () {
                 _controller.jumpTo(3);
               });
             },

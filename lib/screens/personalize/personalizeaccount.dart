@@ -83,14 +83,15 @@ class _PersonalizeAccountState extends State<PersonalizeAccount> {
                         ),
                         child: ElevatedButton(
                           onPressed: currentStep == 0
-                              ? _isstep1AnyActive
-                                  ? () {
-                                      setState(() {
-                                        currentStep = currentStep + 1;
-                                      });
-                                    }
-                                  : null
-                              : _isstep2AnyActive
+                              ?
+                              // ? _isstep1AnyActive
+                              //     ? () {
+                              //         setState(() {
+                              //           currentStep = currentStep + 1;
+                              //         });
+                              //       }
+                              //     : null
+                              _isstep2AnyActive
                                   ? () {
                                       _controller.setLoading(true);
                                       Future.delayed(
@@ -109,7 +110,8 @@ class _PersonalizeAccountState extends State<PersonalizeAccount> {
                                         },
                                       );
                                     }
-                                  : null,
+                                  : null
+                              : null,
                           child: TextPoppins(
                             text: "Continue",
                             fontSize: 14,
@@ -188,20 +190,20 @@ class _PersonalizeAccountState extends State<PersonalizeAccount> {
         title: const Text(""),
         content: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0),
-          child: AccountStep1(isAnyChecked: _step1Check),
+          child: AccountStep2(isAnyChecked: _step2Check),
         ),
       ),
-      Step(
-        state: currentStep > 1 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 1,
-        title: const Text(""),
-        content: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: AccountStep2(
-            isAnyChecked: _step2Check,
-          ),
-        ),
-      ),
+      // Step(
+      //   state: currentStep > 1 ? StepState.complete : StepState.indexed,
+      //   isActive: currentStep >= 1,
+      //   title: const Text(""),
+      //   content: Padding(
+      //     padding: const EdgeInsets.all(10.0),
+      //     child: AccountStep2(
+      //       isAnyChecked: _step2Check,
+      //     ),
+      //   ),
+      // ),
     ];
   }
 }

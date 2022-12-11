@@ -3,18 +3,42 @@ import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:easyfit_app/helper/preference/preference_manager.dart';
 import 'package:easyfit_app/helper/state/state_manager.dart';
 import 'package:easyfit_app/screens/plan/mealplan.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:page_transition/page_transition.dart';
 
-class PlanDialog extends StatelessWidget {
+class PlanDialog extends StatefulWidget {
   final PreferenceManager manager;
   PlanDialog({
     Key? key,
     required this.manager,
   }) : super(key: key);
 
+  @override
+  State<PlanDialog> createState() => _PlanDialogState();
+}
+
+class _PlanDialogState extends State<PlanDialog> {
   final _controller = Get.find<StateController>();
+
+  String _fname = '';
+
+  _init() {
+    final _user = FirebaseAuth.instance.currentUser;
+    if (_user != null) {
+      var arr = _user.displayName?.split(' ');
+      setState(() {
+        _fname = arr![0];
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +56,7 @@ class PlanDialog extends StatelessWidget {
             height: 10.0,
           ),
           TextPoppins(
-            text: "Hey, Arinola",
+            text: "Hey, $_fname",
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Constants.primaryColor,
@@ -59,7 +83,7 @@ class PlanDialog extends StatelessWidget {
                     type: PageTransitionType.size,
                     alignment: Alignment.bottomCenter,
                     child: MealPlan(
-                      manager: manager,
+                      manager: widget.manager,
                     ),
                   ),
                 );

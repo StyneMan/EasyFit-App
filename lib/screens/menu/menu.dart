@@ -2,9 +2,12 @@ import 'package:easyfit_app/components/drawer/custom_drawer.dart';
 import 'package:easyfit_app/components/text_components.dart';
 import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:easyfit_app/helper/preference/preference_manager.dart';
+import 'package:easyfit_app/screens/cart/cart.dart';
 import 'package:easyfit_app/screens/menu/components/listcomponent.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class FoodMenu extends StatefulWidget {
   final PreferenceManager manager;
@@ -54,6 +57,43 @@ class _FoodMenuState extends State<FoodMenu> {
         ),
         centerTitle: true,
         actions: [
+          IconButton(
+            onPressed: () {
+              pushNewScreen(
+                context,
+                withNavBar: true,
+                screen: Cart(manager: widget.manager),
+              );
+            },
+            icon: Stack(
+              children: [
+                const Icon(
+                  CupertinoIcons.cart,
+                  color: Constants.secondaryColor,
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: ClipOval(
+                    child: Container(
+                      width: 14.0,
+                      height: 14.0,
+                      decoration: BoxDecoration(
+                        color: Constants.secondaryColor,
+                        borderRadius: BorderRadius.circular(7.0),
+                      ),
+                      child: TextPoppins(
+                        text: "2",
+                        align: TextAlign.center,
+                        fontSize: 10,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           IconButton(
             onPressed: () {
               if (!_scaffoldKey.currentState!.isEndDrawerOpen) {

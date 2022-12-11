@@ -8,7 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:page_transition/page_transition.dart';
 
 import 'components/mealstep2.dart';
 import 'components/mealstep3.dart';
@@ -26,24 +25,43 @@ class MealPlan extends StatefulWidget {
 
 class _MealPlanState extends State<MealPlan> {
   int _currentStep = 0;
-
-  bool _isstep1AnyActive = false;
-
+  int _selectedPlan = 5;
+  String _totalMeals = "0";
+  List<Map<String, dynamic>> _mealsArr = [];
   bool _isstep2AnyActive = false;
+  List<dynamic> _selectedDays = [];
 
   final _controller = Get.find<StateController>();
 
   PreferenceManager? _manager;
 
-  _step1Check(bool value) {
-    setState(() {
-      _isstep1AnyActive = value;
-    });
-  }
-
   _step2Check(bool value) {
     setState(() {
       _isstep2AnyActive = value;
+    });
+  }
+
+  _setPlan(int plan) {
+    setState(() {
+      _selectedPlan = plan;
+    });
+  }
+
+  _setMealsArr(var value, var plan, var totalMeals) {
+    setState(() {
+      _mealsArr = value;
+      _selectedPlan = plan;
+      _totalMeals = totalMeals;
+    });
+  }
+
+  _filterList() {
+    print("FILTERS:: ");
+    final ids = Set();
+    _mealsArr.retainWhere((x) => ids.add(x['day']));
+    print("SETS:: ${ids.toList()}");
+    setState(() {
+      _selectedDays = ids.toList();
     });
   }
 
@@ -105,40 +123,38 @@ class _MealPlanState extends State<MealPlan> {
                           ),
                           child: ElevatedButton(
                             onPressed: _currentStep == 0
-                                ? _isstep1AnyActive
-                                    ? () {
-                                        setState(() {
-                                          _currentStep = _currentStep + 1;
-                                        });
-                                      }
-                                    : null
-                                : _currentStep == 1
-                                    ? _isstep2AnyActive
-                                        ? () {
-                                            setState(() {
-                                              _currentStep = _currentStep + 1;
-                                            });
-                                          }
-                                        : null
+                                ? () {
+                                    setState(() {
+                                      _currentStep = _currentStep + 1;
+                                    });
+                                  }
+                                : _mealsArr.isEmpty
+                                    ? null
                                     : () {
+                                        _filterList();
                                         showBarModalBottomSheet(
                                           expand: false,
                                           context: context,
                                           topControl: ClipOval(
-                                            child: Container(
-                                              width: 40,
-                                              height: 40,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                  20,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Container(
+                                                width: 32,
+                                                height: 32,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                    16,
+                                                  ),
                                                 ),
-                                              ),
-                                              child: const Center(
-                                                child: Icon(
-                                                  Icons.close,
-                                                  size: 24,
+                                                child: const Center(
+                                                  child: Icon(
+                                                    Icons.close,
+                                                    size: 24,
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -148,14 +164,67 @@ class _MealPlanState extends State<MealPlan> {
                                             height: MediaQuery.of(context)
                                                     .size
                                                     .height *
-                                                0.625,
+                                                0.56,
                                             child: PlanBottomSheet(
                                               manager: widget.manager,
+                                              mealsArr: _mealsArr,
+                                              selectedPlan: _selectedPlan,
+                                              selectedDays: _selectedDays,
+                                              totalMeal: _totalMeals,
                                             ),
                                           ),
                                         );
-                                        // showBottomSheet(context: context, builder: builder)
+                                        // setState(() {
+                                        //   _currentStep = _currentStep + 1;
+                                        // });
+                                        // _filterList();
                                       },
+                            // : null
+                            // : () {
+                            //     showBarModalBottomSheet(
+                            //       expand: false,
+                            //       context: context,
+                            //       topControl: ClipOval(
+                            //         child: GestureDetector(
+                            //           onTap: () {
+                            //             Navigator.of(context).pop();
+                            //           },
+                            //           child: Container(
+                            //             width: 32,
+                            //             height: 32,
+                            //             decoration: BoxDecoration(
+                            //               color: Colors.white,
+                            //               borderRadius:
+                            //                   BorderRadius.circular(
+                            //                 16,
+                            //               ),
+                            //             ),
+                            //             child: const Center(
+                            //               child: Icon(
+                            //                 Icons.close,
+                            //                 size: 24,
+                            //               ),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ),
+                            //       backgroundColor: Colors.transparent,
+                            //       builder: (context) => SizedBox(
+                            //         height: MediaQuery.of(context)
+                            //                 .size
+                            //                 .height *
+                            //             0.625,
+                            //         child: PlanBottomSheet(
+                            //           manager: widget.manager,
+                            //           mealsArr: _mealsArr,
+                            //           selectedPlan: _selectedPlan,
+                            //           selectedDays: _selectedDays,
+                            //           totalMeal: _totalMeals,
+                            //         ),
+                            //       ),
+                            //     );
+                            //     // showBottomSheet(context: context, builder: builder)
+                            //   },
                             child: TextPoppins(
                               text: "Continue",
                               fontSize: 14,
@@ -190,9 +259,16 @@ class _MealPlanState extends State<MealPlan> {
                       });
                     }
                   },
-                  onStepTapped: (step) => setState(() {
-                    _currentStep = step;
-                  }),
+                  onStepTapped: (step) {
+                    if (_currentStep > step) {
+                      setState(() {
+                        _currentStep = step;
+                      });
+                    }
+                    // setState(() {
+                    //   _currentStep = step;
+                    // });
+                  },
                   steps: getSteps(),
                 ),
               ),
@@ -210,8 +286,8 @@ class _MealPlanState extends State<MealPlan> {
         isActive: _currentStep >= 0,
         title: const Text(""),
         content: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
-          child: MealStep1(isAnyChecked: _step1Check),
+          padding: const EdgeInsets.symmetric(vertical: 5.0),
+          child: MealStep1(setPlan: _setPlan),
         ),
       ),
       Step(
@@ -219,21 +295,27 @@ class _MealPlanState extends State<MealPlan> {
         isActive: _currentStep >= 1,
         title: const Text(""),
         content: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          padding: const EdgeInsets.symmetric(vertical: 5.0),
           child: MealStep2(
             isAnyChecked: _step2Check,
+            plan: _selectedPlan,
+            setMealsArr: _setMealsArr,
           ),
         ),
       ),
-      Step(
-        state: _currentStep > 2 ? StepState.complete : StepState.indexed,
-        isActive: _currentStep >= 2,
-        title: const Text(""),
-        content: const Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
-          child: MealStep3(),
-        ),
-      ),
+      // Step(
+      //   state: _currentStep > 2 ? StepState.complete : StepState.indexed,
+      //   isActive: _currentStep >= 2,
+      //   title: const Text(""),
+      //   content: Padding(
+      //     padding: const EdgeInsets.symmetric(vertical: 5.0),
+      //     child: MealStep3(
+      //       mealsArr: _mealsArr,
+      //       selectedPlan: _selectedPlan,
+      //       totalMeal: _totalMeals,
+      //     ),
+      //   ),
+      // ),
     ];
   }
 }

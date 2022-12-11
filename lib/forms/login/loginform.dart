@@ -42,6 +42,9 @@ class _LoginFormState extends State<LoginForm> {
         email: _emailController.text,
         password: _passwordController.text,
       );
+
+      _controller.setLoading(false);
+
       widget.manager.setIsLoggedIn(true);
 
       Navigator.of(context).pushReplacement(
@@ -54,6 +57,7 @@ class _LoginFormState extends State<LoginForm> {
         ),
       );
     } on FirebaseAuthException catch (e) {
+      _controller.setLoading(false);
       print(e.message);
       Constants.toast("${e.message}");
     }
@@ -96,21 +100,22 @@ class _LoginFormState extends State<LoginForm> {
                 return 'Please enter your email or phone';
               }
               //if email
-              if (value.contains(RegExp(r'[a-z]'))) {
-                //Email is entere now check if the email is valid
-                if (!RegExp('^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]')
-                    .hasMatch(value)) {
-                  return 'Please enter a valid email';
-                }
-              } else {
-                if (value.length < 11) {
-                  return "Please enter a valid phone number";
-                }
+              // if (value.contains(RegExp(r'[a-z]'))) {
+              //Email is entere now check if the email is valid
+              if (!RegExp('^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]')
+                  .hasMatch(value)) {
+                return 'Please enter a valid email';
               }
+              // }
+              // else {
+              //   if (value.length < 11) {
+              //     return "Please enter a valid phone number";
+              //   }
+              // }
 
               return null;
             },
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.emailAddress,
             controller: _emailController,
           ),
           const SizedBox(
@@ -169,7 +174,7 @@ class _LoginFormState extends State<LoginForm> {
                     PageTransition(
                       type: PageTransitionType.size,
                       alignment: Alignment.bottomCenter,
-                      child: ForgotPassword(),
+                      child: const ForgotPassword(),
                     ),
                   );
                 },

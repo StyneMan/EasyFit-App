@@ -17,34 +17,43 @@ import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:easyfit_app/helper/preference/preference_manager.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
   final PreferenceManager manager;
   Dashboard({Key? key, required this.manager}) : super(key: key);
 
-  bool _isLoggedIn = false;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-  // String _token = "";
+  @override
+  State<Dashboard> createState() => _DashboardState();
+}
 
-  // ignore: unused_field
+class _DashboardState extends State<Dashboard> {
+  bool _isLoggedIn = false;
+
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // String _token = "";
   final _controller = Get.find<StateController>();
 
   @override
-  Widget build(BuildContext context) {
-    DateTime pre_backpress = DateTime.now();
-
+  void initState() {
+    super.initState();
     if (_controller.showPlan.value) {
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 1), () {
         showDialog<String>(
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
             content: PlanDialog(
-              manager: manager,
+              manager: widget.manager,
             ),
           ),
         );
       });
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    DateTime pre_backpress = DateTime.now();
 
     return WillPopScope(
       onWillPop: () async {
@@ -174,11 +183,11 @@ class Dashboard extends StatelessWidget {
   List<Widget> _buildScreens(_loggedIn) {
     return [
       Home(
-        manager: manager,
+        manager: widget.manager,
       ),
-      Orders(manager: manager),
-      FoodMenu(manager: manager),
-      Account(manager: manager),
+      Orders(manager: widget.manager),
+      FoodMenu(manager: widget.manager),
+      Account(manager: widget.manager),
     ];
   }
 }

@@ -69,7 +69,7 @@ class _SignupFormState extends State<SignupForm> {
       final _auth = FirebaseAuth.instance;
       final resp = await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
-        password: "$_countryCode$_number",
+        password: _passwordController.text,
       );
 
       if (resp.user != null) {
@@ -101,9 +101,9 @@ class _SignupFormState extends State<SignupForm> {
             builder: (context) => VerifyOTP(
               caller: "Register",
               email: _emailController.text,
-              pass: _number,
+              pass: _passwordController.text,
               name: _nameController.text,
-              phone: _phoneController.text,
+              phone: "$_countryCode$_number",
               credential: resp,
               verificationId: verificationId,
               onEntered: _setCode,
@@ -117,6 +117,7 @@ class _SignupFormState extends State<SignupForm> {
       // _auth.verifyPhoneNumber(phoneNumber: _phoneController.text, verificationCompleted: null, verificationFailed: verificationFailed, codeSent: codeSent, codeAutoRetrievalTimeout: codeAutoRetrievalTimeout)
     } on FirebaseAuthException catch (e) {
       _controller.setLoading(false);
+      Constants.toast('${e.message}');
       print("ERR:: ${e.code} - ${e.message}");
     }
   }
