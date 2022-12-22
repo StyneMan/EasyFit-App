@@ -1,15 +1,19 @@
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/data/products/products.dart';
-import 'package:easyfit_app/helper/preference/preference_manager.dart';
-import 'package:easyfit_app/screens/product/components/productcard.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
+import 'package:shimmer/shimmer.dart';
+
+import '../../../helper/preference/preference_manager.dart';
+import '../../../helper/state/state_manager.dart';
+import '../../product/components/productcard.dart';
 
 class ProductSection extends StatelessWidget {
   final PreferenceManager manager;
-  const ProductSection({
+  ProductSection({
     Key? key,
     required this.manager,
   }) : super(key: key);
+
+  final _controller = Get.find<StateController>();
 
   @override
   Widget build(BuildContext context) {
@@ -21,28 +25,52 @@ class ProductSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextPoppins(
-          text: "The Chef's Special",
-          fontSize: 13,
-        ),
         const SizedBox(
           height: 5.0,
         ),
-        GridView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 6.0,
-            crossAxisSpacing: 6.0,
-            childAspectRatio: (itemWidth / itemHeight),
-          ),
-          shrinkWrap: true,
-          itemBuilder: (context, index) => ProductCard(
-            manager: manager,
-            product: productList[index],
-          ),
-          itemCount: productList.length,
-        ),
+        _controller.meals.value.isEmpty
+            ? Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 6.0,
+                    crossAxisSpacing: 6.0,
+                    childAspectRatio: (itemWidth / itemHeight),
+                  ),
+                  shrinkWrap: true,
+                  itemCount: 4,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      elevation: 1.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: SizedBox(
+                        height: 220,
+                        width: MediaQuery.of(context).size.width * 0.4,
+                      ),
+                    );
+                  },
+                ),
+              )
+            : GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 6.0,
+                  crossAxisSpacing: 6.0,
+                  childAspectRatio: (itemWidth / itemHeight),
+                ),
+                shrinkWrap: true,
+                itemBuilder: (context, index) => ProductCard(
+                  manager: manager,
+                  data: _controller.meals.value.elementAt(index),
+                ),
+                itemCount: _controller.meals.value.length,
+              ),
       ],
     );
   }

@@ -1,21 +1,43 @@
-import 'package:easyfit_app/forms/profile/editprofileform.dart';
-import 'package:easyfit_app/screens/cart/cart.dart';
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-import 'package:easyfit_app/components/drawer/custom_drawer.dart';
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/helper/preference/preference_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/instance_manager.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
-class EditProfile extends StatelessWidget {
-  final PreferenceManager manager;
-  EditProfile({Key? key, required this.manager}) : super(key: key);
+import '../../components/drawer/custom_drawer.dart';
+import '../../components/picker/img_picker.dart';
+import '../../components/text_components.dart';
+import '../../forms/profile/editprofileform.dart';
+import '../../helper/constants/constants.dart';
+import '../../helper/preference/preference_manager.dart';
+import '../../helper/state/state_manager.dart';
+import '../cart/cart.dart';
 
+class EditProfile extends StatefulWidget {
+  final PreferenceManager manager;
+  const EditProfile({Key? key, required this.manager}) : super(key: key);
+
+  @override
+  State<EditProfile> createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfile> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _controller = Get.find<StateController>();
+
+  bool _isImagePicked = false;
+  var _croppedFile;
+
+  _onImageSelected(var file) {
+    setState(() {
+      _isImagePicked = true;
+      _croppedFile = file;
+    });
+    print("VALUIE::: :: $file");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +80,7 @@ class EditProfile extends StatelessWidget {
               pushNewScreen(
                 context,
                 withNavBar: true,
-                screen: Cart(manager: manager),
+                screen: Cart(manager: widget.manager),
               );
             },
             icon: Stack(
@@ -106,25 +128,94 @@ class EditProfile extends StatelessWidget {
       endDrawer: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: CustomDrawer(
-          manager: manager,
+          manager: widget.manager,
         ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+          const SizedBox(
+            height: 8.0,
+          ),
           Center(
-            child: SvgPicture.asset(
-              "assets/images/user_icon.svg",
-              fit: BoxFit.cover,
-              width: MediaQuery.of(context).size.width * 0.36,
-              height: MediaQuery.of(context).size.width * 0.36,
+            child: ClipOval(
+              child: _isImagePicked
+                  ? Container(
+                      height: 128,
+                      width: 129,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(64),
+                      ),
+                      child: Image.file(
+                        File(_croppedFile),
+                        errorBuilder: (context, error, stackTrace) => ClipOval(
+                          child: SvgPicture.asset(
+                            "assets/images/user_icon.svg",
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Container(
+                      height: 128,
+                      width: 128,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(64),
+                      ),
+                      child: Image.network(
+                        "src",
+                        errorBuilder: (context, error, stackTrace) => ClipOval(
+                          child: SvgPicture.asset(
+                            "assets/images/user_icon.svg",
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
             ),
           ),
           const SizedBox(
-            height: 10.0,
+            height: 5.0,
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              showBarModalBottomSheet(
+                expand: false,
+                context: context,
+                topControl: ClipOval(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(
+                          16,
+                        ),
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.close,
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                backgroundColor: Colors.transparent,
+                builder: (context) => SizedBox(
+                  height: 144,
+                  child: ImgPicker(
+                    onCropped: _onImageSelected,
+                  ),
+                ),
+              );
+            },
             child: Center(
               child: TextPoppins(
                 text: "Change Picture",

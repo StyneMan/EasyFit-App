@@ -1,14 +1,13 @@
-import 'package:easyfit_app/components/button/customcheckbutton.dart';
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/data/personalize/personalizedata.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/helper/state/state_manager.dart';
-import 'package:easyfit_app/model/mealplan/mealmodel.dart';
-import 'package:easyfit_app/screens/plan/components/assign_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
+
+import '../../../components/text_components.dart';
+import '../../../data/personalize/personalizedata.dart';
+import '../../../helper/constants/constants.dart';
+import '../../../helper/state/state_manager.dart';
+import 'assign_dialog.dart';
 
 typedef InitCallback(bool state);
 typedef MealsCallback(
@@ -385,22 +384,15 @@ class _MealStep2State extends State<MealStep2> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          weekDays[i],
-                          style: widget.plan == 5
-                              ? TextStyle(
-                                  fontSize: 14,
-                                  color: i < 5
-                                      ? Constants.primaryColor
-                                      : Colors.grey,
-                                )
-                              : const TextStyle(
-                                  fontSize: 14,
-                                  color: Constants.primaryColor,
-                                ),
-                        ),
+                        Text(weekDays[i],
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: i < widget.plan
+                                  ? Constants.primaryColor
+                                  : Colors.grey,
+                            )),
                         SizedBox(
-                          child: widget.plan == 5 && i > 4
+                          child: i > widget.plan
                               ? const SizedBox()
                               : Container(
                                   width: 16,
@@ -427,7 +419,7 @@ class _MealStep2State extends State<MealStep2> {
             ].asMap().entries.map((
               wid,
             ) {
-              return widget.plan == 5 && wid.key > 4
+              return wid.key > widget.plan
                   ? ToggleButtons(
                       selectedColor: Constants.primaryColor,
                       isSelected: [_selections[wid.key]],

@@ -212,7 +212,7 @@ class _LoginFormState extends State<LoginForm> {
                 // );
               },
               child: TextPoppins(
-                text: "Signin",
+                text: "Sign in",
                 fontSize: 14,
                 color: Colors.white,
               ),

@@ -1,15 +1,16 @@
-import 'package:easyfit_app/components/drawer/custom_drawer.dart';
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/helper/preference/preference_manager.dart';
-import 'package:easyfit_app/screens/cart/cart.dart';
-import 'package:easyfit_app/screens/home/components/banner.dart';
-import 'package:easyfit_app/screens/home/components/productsection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+
+import '../../components/drawer/custom_drawer.dart';
+import '../../components/text_components.dart';
+import '../../helper/constants/constants.dart';
+import '../../helper/preference/preference_manager.dart';
+import '../cart/cart.dart';
+import 'components/banner.dart';
+import 'components/productsection.dart';
 
 class Home extends StatelessWidget {
   final PreferenceManager? manager;
@@ -135,7 +136,7 @@ class Home extends StatelessWidget {
         children: [
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.275,
-            child: const BannerWidget(),
+            child: BannerWidget(),
           ),
           const SizedBox(
             height: 21.0,

@@ -88,11 +88,43 @@ class _MyAppState extends State<MyApp> {
 
   final _user = FirebaseAuth.instance.currentUser;
 
+  _init() async {
+    // print("FROM MAIN DART ::::");
+    try {
+      await FirebaseFirestore.instance.collection("menus").get().then((value) {
+        _controller.setMenusData(value.docs);
+      });
+
+      await FirebaseFirestore.instance
+          .collection("week_meal")
+          .get()
+          .then((value) {
+        _controller.setFeaturedMeal(value.docs);
+      });
+
+      await FirebaseFirestore.instance
+          .collection("products")
+          .limit(5)
+          .get()
+          .then((value) {
+        _controller.setMealsData(value.docs);
+      });
+
+      // await FirebaseFirestore.instance
+      //     .collection("products")
+      //     .where("category", whereIn: ['Fashion', 'Electronics'])
+      //     .orderBy("price")
+      //     .limit(5)
+      //     .get()
+      //     .then((value) => _controller.setTopDealsData(value.docs));
+    } catch (e) {}
+  }
+
   @override
   void initState() {
     super.initState();
     _manager = PreferenceManager(context);
-    // _init();
+    _init();
   }
 
   // This widget is the root of your application.

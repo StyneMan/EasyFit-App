@@ -1,15 +1,17 @@
-import 'package:easyfit_app/components/drawer/custom_drawer.dart';
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/helper/preference/preference_manager.dart';
-import 'package:easyfit_app/helper/state/state_manager.dart';
-import 'package:easyfit_app/screens/account/edit_profile.dart';
-import 'package:easyfit_app/screens/cart/cart.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/instance_manager.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+
+import '../../components/drawer/custom_drawer.dart';
+import '../../components/text_components.dart';
+import '../../helper/constants/constants.dart';
+import '../../helper/preference/preference_manager.dart';
+import '../../helper/state/state_manager.dart';
+import '../cart/cart.dart';
+import 'edit_profile.dart';
 
 class Account extends StatelessWidget {
   final PreferenceManager manager;
@@ -17,6 +19,8 @@ class Account extends StatelessWidget {
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _controller = Get.find<StateController>();
+
+  final _user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +131,7 @@ class Account extends StatelessWidget {
           ),
           Center(
             child: TextPoppins(
-              text: "${_controller.currentUser!.displayName}",
+              text: _user?.displayName ?? "",
               fontSize: 19,
               fontWeight: FontWeight.bold,
               color: Colors.black,
@@ -143,15 +147,12 @@ class Account extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextPoppins(text: "Email", fontSize: 14),
-                TextPoppins(
-                    text: "${_controller.currentUser!.email}", fontSize: 16),
+                TextPoppins(text: "${_user?.email}", fontSize: 16),
                 const SizedBox(
                   height: 10,
                 ),
                 TextPoppins(text: "Phone", fontSize: 14),
-                TextPoppins(
-                    text: "${_controller.currentUser!.phoneNumber}",
-                    fontSize: 16),
+                TextPoppins(text: "${_user?.phoneNumber}", fontSize: 16),
                 const SizedBox(
                   height: 10,
                 ),
@@ -168,8 +169,6 @@ class Account extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                TextPoppins(text: "Date of Birth", fontSize: 14),
-                TextPoppins(text: "27/06/2022", fontSize: 16),
                 const SizedBox(
                   height: 24,
                 ),

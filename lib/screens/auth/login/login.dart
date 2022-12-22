@@ -98,13 +98,13 @@ class _LoginState extends State<Login> {
                       fontSize: 14,
                     ),
                     const SizedBox(
-                      height: 16.0,
+                      height: 14.0,
                     ),
                     LoginForm(
                       manager: _manager!,
                     ),
                     const SizedBox(
-                      height: 16.0,
+                      height: 14.0,
                     ),
                     Center(
                       child: RichText(

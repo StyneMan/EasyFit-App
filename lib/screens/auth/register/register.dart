@@ -1,17 +1,16 @@
 import 'dart:io';
 
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/forms/signup/signupform.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/helper/state/state_manager.dart';
-import 'package:easyfit_app/screens/auth/otp/verifyotp.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
 import 'package:loading_overlay_pro/loading_overlay_pro.dart';
-import 'package:page_transition/page_transition.dart';
+
+import '../../../components/text_components.dart';
+import '../../../forms/signup/signupform.dart';
+import '../../../helper/constants/constants.dart';
+import '../../../helper/state/state_manager.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -86,7 +85,7 @@ class _RegisterState extends State<Register> {
                     ),
                     TextPoppins(
                       text:
-                          "Create an account and start your journey to the healthy lifestyle.",
+                          "Create an account to have delicious healthy meals handcrafted for YOU fresh daily",
                       fontSize: 14,
                     ),
                     const SizedBox(

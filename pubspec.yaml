@@ -38,6 +38,7 @@ dependencies:
   money_formatter: ^0.0.3
   fluttertoast: ^8.1.1
   get: ^4.6.5
+  shimmer: ^2.0.0
   flutter_svg: ^1.0.3
   page_transition: ^2.0.9
   loading_overlay_pro: ^2.1.1
@@ -49,9 +50,14 @@ dependencies:
   country_code_picker: ^2.0.2
   sms_autofill: ^2.2.0
   pin_code_fields: ^7.4.0
-  confetti: ^0.6.0
+  uuid: ^3.0.6
+  # confetti: ^0.6.0
+  image_picker: ^0.8.4
+  image_cropper: ^3.0.1
+  flutter_paystack: ^1.0.5+1
   flutter_countdown_timer: ^4.1.0
   flutter_time_picker_spinner: ^2.0.0
+  cached_network_image: ^3.2.0
   
   firebase_core: ^1.11.0
   firebase_auth: ^3.3.7

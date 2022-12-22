@@ -1,10 +1,8 @@
-import 'package:easyfit_app/components/button/customcheckbutton.dart';
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/data/personalize/personalizedata.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
+
+import '../../../components/text_components.dart';
+import '../../../helper/constants/constants.dart';
 
 typedef InitCallback(bool state);
 
@@ -27,6 +25,7 @@ class _MealStep3State extends State<MealStep3> {
   bool _isActive = false;
   int _counter = 1;
   DateTime _dateTime = DateTime.now();
+  String _deliveryTime = "Morning (8am - 10am)";
 
   @override
   void initState() {
@@ -59,58 +58,114 @@ class _MealStep3State extends State<MealStep3> {
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    TextPoppins(
-                      text: widget.mealsArr[index]['day'],
-                      fontSize: 13,
-                      color: Constants.primaryColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    const SizedBox(
-                      width: 16.0,
-                    ),
-                    TextPoppins(
-                      text:
-                          "${widget.mealsArr[index]['quantity']} time${_pluralize(widget.mealsArr[index]['quantity'])}",
-                      fontSize: 13,
-                      color: Constants.primaryColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  width: 10.0,
-                ),
-                TimePickerSpinner(
-                  is24HourMode: false,
-                  normalTextStyle:
-                      const TextStyle(fontSize: 16, color: Colors.grey),
-                  highlightedTextStyle: const TextStyle(
-                    fontSize: 16,
-                    color: Constants.primaryColor,
-                    fontWeight: FontWeight.bold,
+          itemBuilder: (context, index) {
+            String val = "$index$_deliveryTime";
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextPoppins(
+                        text: widget.mealsArr[index]['day'],
+                        fontSize: 13,
+                        color: Constants.primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      const SizedBox(
+                        width: 16.0,
+                      ),
+                      TextPoppins(
+                        text:
+                            "${widget.mealsArr[index]['quantity']} meal${_pluralize(widget.mealsArr[index]['quantity'])}",
+                        fontSize: 13,
+                        color: Constants.primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ],
                   ),
-                  spacing: 5,
-                  itemHeight: 20,
-                  isForce2Digits: true,
-                  onTimeChange: (time) {
-                    setState(() {
-                      _dateTime = time;
-                    });
-                  },
-                )
-              ],
-            ),
-          ),
+                  const SizedBox(
+                    width: 4.0,
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RadioListTile(
+                          value: "Morning (08am - 10am)",
+                          groupValue: val,
+                          contentPadding: const EdgeInsets.all(2.0),
+                          title: TextPoppins(
+                            text: "Morning (08am - 10am)",
+                            fontSize: 13,
+                            color: Constants.primaryColor,
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              _deliveryTime = value.toString();
+                            });
+                          },
+                        ),
+                        RadioListTile(
+                          value: "Afternoon (12pm - 01pm)",
+                          groupValue: _deliveryTime,
+                          contentPadding: const EdgeInsets.all(2.0),
+                          onChanged: (value) {
+                            setState(() {
+                              _deliveryTime = value.toString();
+                            });
+                          },
+                          title: TextPoppins(
+                            text: "Afternoon (12pm - 01pm)",
+                            fontSize: 13,
+                            color: Constants.primaryColor,
+                          ),
+                        ),
+                        RadioListTile(
+                          value: "Evening (04pm - 06pm)",
+                          groupValue: _deliveryTime,
+                          contentPadding: const EdgeInsets.all(2.0),
+                          onChanged: (value) {
+                            setState(() {
+                              _deliveryTime = value.toString();
+                            });
+                          },
+                          title: TextPoppins(
+                            text: "Evening (04pm - 06pm)",
+                            fontSize: 13,
+                            color: Constants.primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                  // TimePickerSpinner(
+                  //   is24HourMode: false,
+                  //   normalTextStyle:
+                  //       const TextStyle(fontSize: 16, color: Colors.grey),
+                  //   highlightedTextStyle: const TextStyle(
+                  //     fontSize: 16,
+                  //     color: Constants.primaryColor,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  //   spacing: 5,
+                  //   itemHeight: 20,
+                  //   isForce2Digits: true,
+                  //   onTimeChange: (time) {
+                  //     setState(() {
+                  //       _dateTime = time;
+                  //     });
+                  //   },
+                  // )
+                ],
+              ),
+            );
+          },
           separatorBuilder: (context, i) => const Divider(),
           itemCount: widget.mealsArr.length,
         ),

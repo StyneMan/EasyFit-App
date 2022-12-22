@@ -1,18 +1,21 @@
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/data/products/products.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/helper/preference/preference_manager.dart';
-import 'package:easyfit_app/screens/product/product_detail.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../../../components/shimmer/banner_shimmer.dart';
+import '../../../components/shimmer/image_shimmer.dart';
+import '../../../components/text_components.dart';
+import '../../../helper/constants/constants.dart';
+import '../../../helper/preference/preference_manager.dart';
+import '../product_detail.dart';
+
 class ProductCard extends StatelessWidget {
-  final Product product;
+  var data;
   final PreferenceManager manager;
-  const ProductCard({
+  ProductCard({
     Key? key,
-    required this.product,
+    required this.data,
     required this.manager,
   }) : super(key: key);
 
@@ -26,7 +29,7 @@ class ProductCard extends StatelessWidget {
             PageTransition(
               type: PageTransitionType.size,
               alignment: Alignment.bottomCenter,
-              child: ProductDetail(manager: manager, product: product),
+              child: ProductDetail(manager: manager, data: data),
             ),
           );
         },
@@ -42,14 +45,14 @@ class ProductCard extends StatelessWidget {
               Expanded(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: Image.asset(
-                    product.image,
-                    fit: BoxFit.cover,
-                    height: MediaQuery.of(context).size.height * 0.165,
-                    errorBuilder: (context, err, st) => Image.asset(
-                      "assets/images/placeholder.png",
-                      fit: BoxFit.cover,
-                      height: MediaQuery.of(context).size.height * 0.165,
+                  child: Center(
+                    child: CachedNetworkImage(
+                      imageUrl: '${data['image']}',
+                      progressIndicatorBuilder: (context, url, prog) =>
+                          const Center(
+                        child: ImageShimmer(),
+                      ),
+                      errorWidget: (context, err, st) => const BannerShimmer(),
                     ),
                   ),
                 ),
@@ -62,17 +65,17 @@ class ProductCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     TextPoppins(
-                      text: product.name.length > 19
-                          ? product.name.substring(0, 16) + "..."
-                          : product.name,
+                      text: data['name'].length > 19
+                          ? data['name'].substring(0, 16) + "..."
+                          : data['name'],
                       color: Colors.black,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                     TextPoppins(
-                      text: product.description.length > 24
-                          ? product.description.substring(0, 21) + "..."
-                          : product.description,
+                      text: data['description'].length > 24
+                          ? data['description'].substring(0, 21) + "..."
+                          : data['description'],
                       color: Colors.grey,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -82,7 +85,7 @@ class ProductCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          "${Constants.nairaSign(context).currencySymbol} ${Constants.formatMoney(product.price)}",
+                          "${Constants.nairaSign(context).currencySymbol} ${Constants.formatMoney(data['price'])}",
                           style: const TextStyle(
                             color: Constants.primaryColor,
                             fontSize: 15,
@@ -93,13 +96,18 @@ class ProductCard extends StatelessWidget {
                           width: 12.0,
                         ),
                         ClipOval(
-                          child: Container(
-                            color: Constants.primaryColor,
-                            padding: const EdgeInsets.all(4.0),
-                            child: const Icon(
-                              CupertinoIcons.add,
-                              color: Colors.white,
-                              size: 14,
+                          child: GestureDetector(
+                            onTap: () {
+                              //Add to cart here
+                            },
+                            child: Container(
+                              color: Constants.primaryColor,
+                              padding: const EdgeInsets.all(4.0),
+                              child: const Icon(
+                                CupertinoIcons.add,
+                                color: Colors.white,
+                                size: 14,
+                              ),
                             ),
                           ),
                         ),

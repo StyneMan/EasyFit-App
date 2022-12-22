@@ -1,5 +1,5 @@
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
+import '../../components/text_components.dart';
+import '../../helper/constants/constants.dart';
 import 'package:flutter/material.dart';
 
 class EditProfileForm extends StatefulWidget {
@@ -18,7 +18,6 @@ class _EditProfileFormState extends State<EditProfileForm> {
   final _addressController = TextEditingController();
   final _phoneController = TextEditingController();
   final _landmarkController = TextEditingController();
-  final _dobController = TextEditingController();
 
   @override
   void initState() {
@@ -136,22 +135,6 @@ class _EditProfileFormState extends State<EditProfileForm> {
             TextPoppins(text: "Landmark", fontSize: 14),
             TextFormField(
               controller: _landmarkController,
-              keyboardType: TextInputType.name,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                filled: false,
-                hintText: 'Landmark',
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a landmark';
-                }
-                return null;
-              },
-            ),
-            TextPoppins(text: "Date of Birth", fontSize: 14),
-            TextFormField(
-              controller: _dobController,
               keyboardType: TextInputType.name,
               textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(

@@ -1,14 +1,14 @@
 import 'dart:math';
 
-import 'package:confetti/confetti.dart';
-import 'package:easyfit_app/components/dashboard/dashboard.dart';
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/helper/preference/preference_manager.dart';
-import 'package:easyfit_app/screens/personalize/personalizeaccount.dart';
+// import 'package:confetti/confetti.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:page_transition/page_transition.dart';
+
+import '../../../components/dashboard/dashboard.dart';
+import '../../../components/text_components.dart';
+import '../../../helper/preference/preference_manager.dart';
 
 class AccountSuccess extends StatefulWidget {
   const AccountSuccess({Key? key}) : super(key: key);
@@ -18,9 +18,9 @@ class AccountSuccess extends StatefulWidget {
 }
 
 class _AccountSuccessState extends State<AccountSuccess> {
-  late ConfettiController _controllerTopCenter;
-  late ConfettiController _controllerCenterLeft;
-  late ConfettiController _controllerBottomCenter;
+  // late ConfettiController _controllerTopCenter;
+  // late ConfettiController _controllerCenterLeft;
+  // late ConfettiController _controllerBottomCenter;
 
   PreferenceManager? _manager;
 
@@ -32,17 +32,17 @@ class _AccountSuccessState extends State<AccountSuccess> {
     //     ConfettiController(duration: const Duration(seconds: 10));
     // _controllerCenterRight =
     //     ConfettiController(duration: const Duration(seconds: 10));
-    _controllerCenterLeft =
-        ConfettiController(duration: const Duration(seconds: 45));
-    _controllerTopCenter =
-        ConfettiController(duration: const Duration(seconds: 45));
-    _controllerBottomCenter =
-        ConfettiController(duration: const Duration(seconds: 45));
+    // _controllerCenterLeft =
+    //     ConfettiController(duration: const Duration(seconds: 45));
+    // _controllerTopCenter =
+    //     ConfettiController(duration: const Duration(seconds: 45));
+    // _controllerBottomCenter =
+    //     ConfettiController(duration: const Duration(seconds: 45));
 
-    // Future.delayed(const Duration(seconds: 1), () {
-    _controllerTopCenter.play();
-    _controllerCenterLeft.play();
-    _controllerBottomCenter.play();
+    // // Future.delayed(const Duration(seconds: 1), () {
+    // _controllerTopCenter.play();
+    // _controllerCenterLeft.play();
+    // _controllerBottomCenter.play();
     // });
   }
 
@@ -50,9 +50,9 @@ class _AccountSuccessState extends State<AccountSuccess> {
   void dispose() {
     // _controllerCenter.dispose();
     // _controllerCenterRight.dispose();
-    _controllerCenterLeft.dispose();
-    _controllerTopCenter.dispose();
-    _controllerBottomCenter.dispose();
+    // _controllerCenterLeft.dispose();
+    // _controllerTopCenter.dispose();
+    // _controllerBottomCenter.dispose();
     super.dispose();
   }
 
@@ -83,11 +83,11 @@ class _AccountSuccessState extends State<AccountSuccess> {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(seconds: 1), () {
-      _controllerTopCenter.play();
-      _controllerCenterLeft.play();
-      _controllerBottomCenter.play();
-    });
+    // Future.delayed(const Duration(seconds: 1), () {
+    //   _controllerTopCenter.play();
+    //   _controllerCenterLeft.play();
+    //   _controllerBottomCenter.play();
+    // });
 
     return Scaffold(
       body: SizedBox(
@@ -95,53 +95,58 @@ class _AccountSuccessState extends State<AccountSuccess> {
         height: double.infinity,
         child: Stack(
           children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: ConfettiWidget(
-                confettiController: _controllerCenterLeft,
-                blastDirection: 0, // radial value - RIGHT
-                emissionFrequency: 0.6,
-                minimumSize: const Size(10,
-                    10), // set the minimum potential size for the confetti (width, height)
-                maximumSize: const Size(50,
-                    50), // set the maximum potential size for the confetti (width, height)
-                numberOfParticles: 1,
-                gravity: 0.1,
-              ),
-            ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: ConfettiWidget(
-                confettiController: _controllerTopCenter,
-                blastDirection: pi / 2,
-                maxBlastForce: 5, // set a lower max blast force
-                minBlastForce: 2, // set a lower min blast force
-                emissionFrequency: 0.05,
-                numberOfParticles: 50, // a lot of particles at once
-                gravity: 1,
-              ),
-            ),
-            //BOTTOM CENTER
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: ConfettiWidget(
-                confettiController: _controllerBottomCenter,
-                blastDirection: -pi / 2,
-                emissionFrequency: 0.01,
-                numberOfParticles: 60,
-                maxBlastForce: 100,
-                minBlastForce: 80,
-                gravity: 0.3,
-              ),
-            ),
+            // Align(
+            //   alignment: Alignment.centerLeft,
+            //   child: ConfettiWidget(
+            //     confettiController: _controllerCenterLeft,
+            //     blastDirection: 0, // radial value - RIGHT
+            //     emissionFrequency: 0.6,
+            //     minimumSize: const Size(10,
+            //         10), // set the minimum potential size for the confetti (width, height)
+            //     maximumSize: const Size(50,
+            //         50), // set the maximum potential size for the confetti (width, height)
+            //     numberOfParticles: 1,
+            //     gravity: 0.1,
+            //   ),
+            // ),
+            // Align(
+            //   alignment: Alignment.topCenter,
+            //   child: ConfettiWidget(
+            //     confettiController: _controllerTopCenter,
+            //     blastDirection: pi / 2,
+            //     maxBlastForce: 5, // set a lower max blast force
+            //     minBlastForce: 2, // set a lower min blast force
+            //     emissionFrequency: 0.05,
+            //     numberOfParticles: 50, // a lot of particles at once
+            //     gravity: 1,
+            //   ),
+            // ),
+            // //BOTTOM CENTER
+            // Align(
+            //   alignment: Alignment.bottomCenter,
+            //   child: ConfettiWidget(
+            //     confettiController: _controllerBottomCenter,
+            //     blastDirection: -pi / 2,
+            //     emissionFrequency: 0.01,
+            //     numberOfParticles: 60,
+            //     maxBlastForce: 100,
+            //     minBlastForce: 80,
+            //     gravity: 0.3,
+            //   ),
+            // ),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    "assets/images/smiley.png",
-                    fit: BoxFit.cover,
+                  // Image.asset(
+                  //   "assets/images/smiley.png",
+                  //   fit: BoxFit.cover,
+                  // ),
+                  const Icon(
+                    CupertinoIcons.check_mark_circled_solid,
+                    size: 48,
+                    color: Colors.green,
                   ),
                   TextPoppins(
                     text:
@@ -158,7 +163,7 @@ class _AccountSuccessState extends State<AccountSuccess> {
                     width: MediaQuery.of(context).size.width * 0.80,
                     child: TextPoppins(
                       text:
-                          "You’re one step away from living that healthy life and achieving that body goal. ",
+                          "You’re a few clicks away to staying on track with your nutrition goals",
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       align: TextAlign.center,

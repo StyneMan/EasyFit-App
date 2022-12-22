@@ -1,12 +1,13 @@
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/helper/preference/preference_manager.dart';
-import 'package:easyfit_app/helper/state/state_manager.dart';
-import 'package:easyfit_app/screens/plan/mealplan.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:page_transition/page_transition.dart';
+
+import '../../../components/text_components.dart';
+import '../../../helper/constants/constants.dart';
+import '../../../helper/preference/preference_manager.dart';
+import '../../../helper/state/state_manager.dart';
+import '../mealplan.dart';
 
 class PlanDialog extends StatefulWidget {
   final PreferenceManager manager;
@@ -43,17 +44,14 @@ class _PlanDialogState extends State<PlanDialog> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 360,
+      height: 320,
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Center(
-            child: Image.asset("assets/images/weight_gain.png"),
-          ),
           const SizedBox(
-            height: 10.0,
+            height: 4.0,
           ),
           TextPoppins(
             text: "Hey, $_fname",

@@ -1,11 +1,10 @@
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/helper/preference/preference_manager.dart';
-import 'package:easyfit_app/helper/state/state_manager.dart';
-import 'package:easyfit_app/screens/account/account.dart';
-import 'package:easyfit_app/screens/menu/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
+
+import '../../../components/text_components.dart';
+import '../../../helper/constants/constants.dart';
+import '../../../helper/preference/preference_manager.dart';
+import '../../../helper/state/state_manager.dart';
 
 class PlanBottomSheet extends StatelessWidget {
   final PreferenceManager manager;
@@ -51,7 +50,7 @@ class PlanBottomSheet extends StatelessWidget {
           ),
         ),
         const SizedBox(
-          height: 16.0,
+          height: 10.0,
         ),
         Container(
           padding: const EdgeInsets.all(16.0),
@@ -138,58 +137,58 @@ class PlanBottomSheet extends StatelessWidget {
               const SizedBox(
                 height: 5.0,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  TextPoppins(
-                    text: "Amount",
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                  const SizedBox(
-                    width: 4.0,
-                  ),
-                  Text(
-                    "${Constants.nairaSign(context).currencySymbol}80,000/4 weeks",
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  )
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   crossAxisAlignment: CrossAxisAlignment.center,
+              //   children: [
+              //     TextPoppins(
+              //       text: "Amount",
+              //       fontSize: 14,
+              //       fontWeight: FontWeight.w600,
+              //       color: Colors.black,
+              //     ),
+              //     const SizedBox(
+              //       width: 4.0,
+              //     ),
+              //     Text(
+              //       "${Constants.nairaSign(context).currencySymbol}80,000/4 weeks",
+              //       style: const TextStyle(
+              //         color: Colors.black,
+              //         fontSize: 14,
+              //         fontWeight: FontWeight.w600,
+              //       ),
+              //     )
+              //   ],
+              // ),
             ],
           ),
         ),
         const SizedBox(
           height: 16.0,
         ),
+        // Padding(
+        //   padding: const EdgeInsets.all(16.0),
+        //   child: ElevatedButton(
+        //     onPressed: () {
+        //       Navigator.of(context).pop();
+        //       Navigator.of(context).pop();
+        //       Future.delayed(const Duration(milliseconds: 300), () {
+        //         _controller.jumpTo(3);
+        //       });
+        //     },
+        //     child: Container(
+        //       padding: const EdgeInsets.all(10.0),
+        //       width: double.infinity,
+        //       child: TextPoppins(
+        //         text: "Complete plan setup",
+        //         fontSize: 16,
+        //         align: TextAlign.center,
+        //       ),
+        //     ),
+        //   ),
+        // ),
         Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              Future.delayed(const Duration(milliseconds: 300), () {
-                _controller.jumpTo(3);
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.all(10.0),
-              width: double.infinity,
-              child: TextPoppins(
-                text: "Complete plan setup",
-                fontSize: 16,
-                align: TextAlign.center,
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -205,7 +204,7 @@ class PlanBottomSheet extends StatelessWidget {
                 });
               },
               child: TextPoppins(
-                text: "Take a look at our menu",
+                text: "Continue to menu",
                 fontSize: 16,
                 align: TextAlign.center,
               ),

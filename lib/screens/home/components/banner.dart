@@ -1,11 +1,15 @@
-import 'package:easyfit_app/components/text_components.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
+
+import '../../../components/shimmer/banner_shimmer.dart';
+import '../../../components/text_components.dart';
+import '../../../helper/state/state_manager.dart';
 
 class BannerWidget extends StatelessWidget {
-  const BannerWidget({Key? key}) : super(key: key);
+  BannerWidget({Key? key}) : super(key: key);
 
-  final String _imgUrl =
-      "https://images.unsplash.com/photo-1543353071-10c8ba85a904?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80";
+  final _controller = Get.find<StateController>();
 
   @override
   Widget build(BuildContext context) {
@@ -15,44 +19,52 @@ class BannerWidget extends StatelessWidget {
         borderRadius: const BorderRadius.all(
           Radius.circular(16.0),
         ),
-        child: Stack(
-          children: <Widget>[
-            Image.network(
-              _imgUrl,
-              fit: BoxFit.cover,
-              width: 1000.0,
-              errorBuilder: (context, err, st) =>
-                  Image.asset("assets/images/placeholder.png"),
-            ),
-            Positioned(
-              bottom: 0.0,
-              left: 0.0,
-              right: 0.0,
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color.fromARGB(200, 0, 0, 0),
-                      Color.fromARGB(0, 0, 0, 0)
-                    ],
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
+        child: _controller.featuredMeal.value.isEmpty
+            ? const BannerShimmer()
+            : Stack(
+                children: <Widget>[
+                  CachedNetworkImage(
+                    imageUrl: _controller.featuredMeal.value[0]['image'],
+                    progressIndicatorBuilder: (context, url, prog) =>
+                        const Center(
+                      child: BannerShimmer(),
+                    ),
+                    fit: BoxFit.cover,
+                    height: 200,
+                    width: 1000.0,
+                    errorWidget: (context, err, st) => const Center(
+                      child: BannerShimmer(),
+                    ),
                   ),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 21.0,
-                  horizontal: 20.0,
-                ),
-                child: TextPoppins(
-                  text: "Meal of the week",
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                  Positioned(
+                    bottom: 0.0,
+                    left: 0.0,
+                    right: 0.0,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color.fromARGB(200, 0, 0, 0),
+                            Color.fromARGB(0, 0, 0, 0)
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 21.0,
+                        horizontal: 20.0,
+                      ),
+                      child: TextPoppins(
+                        text: "Meal of the week",
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

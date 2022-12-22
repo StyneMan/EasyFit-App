@@ -1,16 +1,16 @@
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/helper/preference/preference_manager.dart';
-import 'package:easyfit_app/helper/state/state_manager.dart';
-import 'package:easyfit_app/screens/plan/components/mealstep1.dart';
-import 'package:easyfit_app/screens/plan/components/plan_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
+import '../../components/text_components.dart';
+import '../../helper/constants/constants.dart';
+import '../../helper/preference/preference_manager.dart';
+import '../../helper/state/state_manager.dart';
+import 'components/mealstep1.dart';
 import 'components/mealstep2.dart';
 import 'components/mealstep3.dart';
+import 'components/plan_sheet.dart';
 
 class MealPlan extends StatefulWidget {
   final PreferenceManager manager;
@@ -128,10 +128,67 @@ class _MealPlanState extends State<MealPlan> {
                                       _currentStep = _currentStep + 1;
                                     });
                                   }
-                                : _mealsArr.isEmpty
-                                    ? null
+                                : _currentStep == 1
+                                    ? _mealsArr.isEmpty
+                                        ? null
+                                        : () {
+                                            _filterList();
+                                            // showBarModalBottomSheet(
+                                            //   expand: false,
+                                            //   context: context,
+                                            //   topControl: ClipOval(
+                                            //     child: GestureDetector(
+                                            //       onTap: () {
+                                            //         Navigator.of(context).pop();
+                                            //       },
+                                            //       child: Container(
+                                            //         width: 32,
+                                            //         height: 32,
+                                            //         decoration: BoxDecoration(
+                                            //           color: Colors.white,
+                                            //           borderRadius:
+                                            //               BorderRadius.circular(
+                                            //             16,
+                                            //           ),
+                                            //         ),
+                                            //         child: const Center(
+                                            //           child: Icon(
+                                            //             Icons.close,
+                                            //             size: 24,
+                                            //           ),
+                                            //         ),
+                                            //       ),
+                                            //     ),
+                                            //   ),
+                                            //   backgroundColor:
+                                            //       Colors.transparent,
+                                            //   builder: (context) => SizedBox(
+                                            //     height: MediaQuery.of(context)
+                                            //             .size
+                                            //             .height *
+                                            //         0.56,
+                                            //     child: PlanBottomSheet(
+                                            //       manager: widget.manager,
+                                            //       mealsArr: _mealsArr,
+                                            //       selectedPlan: _selectedPlan,
+                                            //       selectedDays: _selectedDays,
+                                            //       totalMeal: _totalMeals,
+                                            //     ),
+                                            //   ),
+                                            // );
+                                            setState(() {
+                                              _currentStep = _currentStep + 1;
+                                            });
+                                            // _filterList();
+                                          }
                                     : () {
-                                        _filterList();
+                                        _controller.savePlan({
+                                          "selectedPlan": _selectedPlan,
+                                          "selectedDays": _selectedDays,
+                                          "meals": _mealsArr,
+                                          "totalMeals": _totalMeals
+                                        });
+
                                         showBarModalBottomSheet(
                                           expand: false,
                                           context: context,
@@ -164,7 +221,7 @@ class _MealPlanState extends State<MealPlan> {
                                             height: MediaQuery.of(context)
                                                     .size
                                                     .height *
-                                                0.56,
+                                                0.4,
                                             child: PlanBottomSheet(
                                               manager: widget.manager,
                                               mealsArr: _mealsArr,
@@ -174,57 +231,8 @@ class _MealPlanState extends State<MealPlan> {
                                             ),
                                           ),
                                         );
-                                        // setState(() {
-                                        //   _currentStep = _currentStep + 1;
-                                        // });
-                                        // _filterList();
+                                        // showBottomSheet(context: context, builder: builder)
                                       },
-                            // : null
-                            // : () {
-                            //     showBarModalBottomSheet(
-                            //       expand: false,
-                            //       context: context,
-                            //       topControl: ClipOval(
-                            //         child: GestureDetector(
-                            //           onTap: () {
-                            //             Navigator.of(context).pop();
-                            //           },
-                            //           child: Container(
-                            //             width: 32,
-                            //             height: 32,
-                            //             decoration: BoxDecoration(
-                            //               color: Colors.white,
-                            //               borderRadius:
-                            //                   BorderRadius.circular(
-                            //                 16,
-                            //               ),
-                            //             ),
-                            //             child: const Center(
-                            //               child: Icon(
-                            //                 Icons.close,
-                            //                 size: 24,
-                            //               ),
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ),
-                            //       backgroundColor: Colors.transparent,
-                            //       builder: (context) => SizedBox(
-                            //         height: MediaQuery.of(context)
-                            //                 .size
-                            //                 .height *
-                            //             0.625,
-                            //         child: PlanBottomSheet(
-                            //           manager: widget.manager,
-                            //           mealsArr: _mealsArr,
-                            //           selectedPlan: _selectedPlan,
-                            //           selectedDays: _selectedDays,
-                            //           totalMeal: _totalMeals,
-                            //         ),
-                            //       ),
-                            //     );
-                            //     // showBottomSheet(context: context, builder: builder)
-                            //   },
                             child: TextPoppins(
                               text: "Continue",
                               fontSize: 14,
@@ -303,19 +311,19 @@ class _MealPlanState extends State<MealPlan> {
           ),
         ),
       ),
-      // Step(
-      //   state: _currentStep > 2 ? StepState.complete : StepState.indexed,
-      //   isActive: _currentStep >= 2,
-      //   title: const Text(""),
-      //   content: Padding(
-      //     padding: const EdgeInsets.symmetric(vertical: 5.0),
-      //     child: MealStep3(
-      //       mealsArr: _mealsArr,
-      //       selectedPlan: _selectedPlan,
-      //       totalMeal: _totalMeals,
-      //     ),
-      //   ),
-      // ),
+      Step(
+        state: _currentStep > 2 ? StepState.complete : StepState.indexed,
+        isActive: _currentStep >= 2,
+        title: const Text(""),
+        content: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5.0),
+          child: MealStep3(
+            mealsArr: _mealsArr,
+            selectedPlan: _selectedPlan,
+            totalMeal: _totalMeals,
+          ),
+        ),
+      ),
     ];
   }
 }

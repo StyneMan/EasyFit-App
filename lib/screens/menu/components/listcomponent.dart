@@ -1,10 +1,13 @@
 import 'package:easyfit_app/helper/preference/preference_manager.dart';
-import 'package:easyfit_app/model/menu/menumodel.dart';
-import 'package:easyfit_app/screens/menu/components/menu_card.dart';
-import 'package:easyfit_app/screens/menu/meals_details.dart';
+import 'package:easyfit_app/helper/state/state_manager.dart';
+import 'package:easyfit_app/screens/menu/menu_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:shimmer/shimmer.dart';
+
+import 'menu_card.dart';
 
 class ListComponent extends StatefulWidget {
   final PreferenceManager manager;
@@ -19,21 +22,24 @@ class ListComponent extends StatefulWidget {
 
 class _ListComponentState extends State<ListComponent> {
   final _searchController = TextEditingController();
+  final _controller = Get.find<StateController>();
 
-  List<MenuModel> _filtered = [];
+  var _filtered = [];
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _filtered = menuList;
-    });
+    if (_controller.menus.value.isNotEmpty) {
+      setState(() {
+        _filtered = _controller.menus.value;
+      });
+    }
   }
 
   _onChanged(String val) {
     if (_searchController.text.isNotEmpty) {
-      var filt = menuList.where(
-        (element) => element.title.toLowerCase().contains(
+      var filt = _controller.menus.value.where(
+        (element) => element['name'].toLowerCase().contains(
               val.toLowerCase(),
             ),
       );
@@ -42,7 +48,7 @@ class _ListComponentState extends State<ListComponent> {
       });
     } else {
       setState(() {
-        _filtered = menuList;
+        _filtered = _controller.menus.value;
       });
     }
   }
@@ -92,32 +98,60 @@ class _ListComponentState extends State<ListComponent> {
           const SizedBox(
             height: 16.0,
           ),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10.0,
-              crossAxisSpacing: 10.0,
-              childAspectRatio: (itemHeight / itemHeight),
-            ),
-            itemBuilder: (context, index) => TextButton(
-              onPressed: () {
-                pushNewScreen(
-                  context,
-                  screen: MealsDetails(
-                    title: _filtered[index].title,
-                    manager: widget.manager,
+          _controller.menus.value.isEmpty
+              ? Shimmer.fromColors(
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    itemCount: 4,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 10.0,
+                      crossAxisSpacing: 10.0,
+                      childAspectRatio: (itemHeight / itemHeight),
+                    ),
+                    itemBuilder: (context, index) => Card(
+                      elevation: 1.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: SizedBox(
+                        height: 210,
+                        width: MediaQuery.of(context).size.width * 0.42,
+                      ),
+                    ),
                   ),
-                );
-              },
-              child: MenuCard(
-                menu: _filtered[index],
-              ),
-              style: TextButton.styleFrom(padding: const EdgeInsets.all(0.0)),
-            ),
-            itemCount: _filtered.length,
-          ),
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                )
+              : GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10.0,
+                    crossAxisSpacing: 10.0,
+                    childAspectRatio: (itemHeight / itemHeight),
+                  ),
+                  itemBuilder: (context, index) => TextButton(
+                    onPressed: () {
+                      pushNewScreen(
+                        context,
+                        screen: MenuDetails(
+                          title: _filtered[index]['name'],
+                          manager: widget.manager,
+                        ),
+                      );
+                    },
+                    child: MenuCard(
+                      data: _filtered[index],
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.all(0.0),
+                    ),
+                  ),
+                  itemCount: _filtered.length,
+                ),
           const SizedBox(
             height: 24.0,
           ),
