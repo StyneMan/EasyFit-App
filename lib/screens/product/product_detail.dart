@@ -114,18 +114,29 @@ class _ProductDetailState extends State<ProductDetail> {
           ),
         );
       }
-       
     }
   }
 
-  Widget _assigner(selectedDays, ) {
+  Widget _assigner(
+    selectedDays,
+  ) {
     return ListView(
       padding: const EdgeInsets.all(10.0),
       children: [
-        TextPoppins(text: "Total meals for ${_selectedDay} is ${}", fontSize: 14),
-        const SizedBox(height: 4.0,),
-        TextPoppins(text: _errorMessage, fontSize: 12, color: Colors.red,),
-        const SizedBox(height: 10.0,),
+        TextPoppins(
+            text: "Total meals for ${_selectedDay} is $_dayQuantity",
+            fontSize: 14),
+        const SizedBox(
+          height: 4.0,
+        ),
+        TextPoppins(
+          text: _errorMessage,
+          fontSize: 12,
+          color: Colors.red,
+        ),
+        const SizedBox(
+          height: 10.0,
+        ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           decoration: BoxDecoration(
@@ -143,39 +154,41 @@ class _ProductDetailState extends State<ProductDetail> {
             }).toList(),
             value: _selectedDay,
             onChanged: (newValue) {
-
-             var quans = _controller.planSetup['meals']
+              var quans = _controller.planSetup['meals']
                   .where((element) => element['day'] == newValue as String?)
                   .toList();
               // print("HJS JS :: $_cities");
               setState(() {
                 _selectedDay = (newValue as String?)!;
+                _dayQuantity = quans[0]['quantity'];
                 // _selectedCity = _cities[0]['cities'][0];
               });
               switch (_selectedDay) {
                 case "Mon":
-                  if (_controller.monCartList.value.length < quans[0]['quantity']) {
+                  if (_controller.monCartList.value.length <
+                      quans[0]['quantity']) {
                     //Good add more
                     setState(() {
                       _errorMessage = "";
                     });
-                  }
-                  else {
+                  } else {
                     setState(() {
-                      _errorMessage = "$_selectedDay is filled. Required ${quans[0]['quantity']} meal${_pluralizer(quans[0]['quantity'])}";
+                      _errorMessage =
+                          "$_selectedDay is filled. Required ${quans[0]['quantity']} meal${_pluralizer(quans[0]['quantity'])}";
                     });
                   }
                   break;
                 case "Tue":
-                  if (_controller.tueCartList.value.length < quans[0]['quantity']) {
+                  if (_controller.tueCartList.value.length <
+                      quans[0]['quantity']) {
                     //Good add more
                     setState(() {
                       _errorMessage = "";
                     });
-                  }
-                  else {
+                  } else {
                     setState(() {
-                      _errorMessage = "$_selectedDay is filled. Required ${quans[0]['quantity']} meal${_pluralizer(quans[0]['quantity'])}";
+                      _errorMessage =
+                          "$_selectedDay is filled. Required ${quans[0]['quantity']} meal${_pluralizer(quans[0]['quantity'])}";
                     });
                   }
                   break;
@@ -189,10 +202,13 @@ class _ProductDetailState extends State<ProductDetail> {
           ),
         ),
         const SizedBox(height: 16.0),
-        SizedBox(width: double.infinity, child: ElevatedButton(onPressed: () {
-
-        }, child: TextPoppins(text: "Continue", fontSize: 14),),),
-
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {},
+            child: TextPoppins(text: "Continue", fontSize: 14),
+          ),
+        ),
       ],
     );
   }
