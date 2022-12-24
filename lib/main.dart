@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 enum Version { lazy, wait }
+
 // Cmd-line args/Env vars: https://stackoverflow.com/a/64686348/2301224
 const String version = String.fromEnvironment('VERSION');
 const Version running = version == "lazy" ? Version.lazy : Version.wait;
@@ -104,7 +105,6 @@ class _MyAppState extends State<MyApp> {
 
       await FirebaseFirestore.instance
           .collection("products")
-          .limit(5)
           .get()
           .then((value) {
         _controller.setMealsData(value.docs);
@@ -127,9 +127,24 @@ class _MyAppState extends State<MyApp> {
     _init();
   }
 
+  _initAgain() async {
+    await FirebaseFirestore.instance.collection("products").get().then((value) {
+      _controller.setMealsData(value.docs);
+    });
+
+    await FirebaseFirestore.instance
+        .collection("week_meal")
+        .get()
+        .then((value) {
+      _controller.setFeaturedMeal(value.docs);
+    });
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    _initAgain();
+
     return FutureBuilder(
       future: Init.instance.initialize(),
       builder: (context, AsyncSnapshot snapshot) {

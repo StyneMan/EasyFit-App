@@ -5,7 +5,7 @@ class CartModel {
   late int price;
   late int addedOn;
   String? productId;
-  String? category;
+  String? menu;
   late int quantity;
   int? cost;
 
@@ -18,7 +18,7 @@ class CartModel {
     required this.quantity,
     required this.cost,
     required this.addedOn,
-    required this.category,
+    required this.menu,
   });
 
   CartModel.fromJson(Map<String, dynamic> json) {
@@ -29,7 +29,7 @@ class CartModel {
     productId = json['productId'];
     quantity = json['quantity'] ?? 1;
     cost = json['cost'];
-    category = json['category'];
+    menu = json['menu'];
     addedOn = json['addedOn'];
   }
 
@@ -41,43 +41,43 @@ class CartModel {
         'cost': price * quantity,
         'quantity': quantity,
         'productId': productId,
-        'category': category,
+        'menu': menu,
         'addedOn': addedOn,
       };
 }
 
-List<CartModel> cartList = [
-  CartModel(
-    id: "121",
-    name: "Sweet corn & beef protein",
-    image: "assets/images/dsc4.png",
-    price: 5000,
-    productId: "productId",
-    quantity: 2,
-    cost: 7000,
-    addedOn: 11,
-    category: "category",
-  ),
-  CartModel(
-    id: "121",
-    name: "Sweet corn & beef protein",
-    image: "assets/images/dsc2.png",
-    price: 5000,
-    productId: "productId",
-    quantity: 2,
-    cost: 7000,
-    addedOn: 11,
-    category: "category",
-  ),
-  CartModel(
-    id: "122",
-    name: "Sweet corn & beef protein",
-    image: "assets/images/dsc1.png",
-    price: 5000,
-    productId: "productId",
-    quantity: 2,
-    cost: 10000,
-    addedOn: 11,
-    category: "category",
-  ),
-];
+// List<CartModel> cartList = [
+//   CartModel(
+//     id: "121",
+//     name: "Sweet corn & beef protein",
+//     image: "assets/images/dsc4.png",
+//     price: 5000,
+//     productId: "productId",
+//     quantity: 2,
+//     cost: 7000,
+//     addedOn: 11,
+//     category: "category",
+//   ),
+//   CartModel(
+//     id: "121",
+//     name: "Sweet corn & beef protein",
+//     image: "assets/images/dsc2.png",
+//     price: 5000,
+//     productId: "productId",
+//     quantity: 2,
+//     cost: 7000,
+//     addedOn: 11,
+//     category: "category",
+//   ),
+//   CartModel(
+//     id: "122",
+//     name: "Sweet corn & beef protein",
+//     image: "assets/images/dsc1.png",
+//     price: 5000,
+//     productId: "productId",
+//     quantity: 2,
+//     cost: 10000,
+//     addedOn: 11,
+//     category: "category",
+//   ),
+// ];

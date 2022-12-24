@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easyfit_app/model/cart/cart_model.dart';
 // import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:easyfit_app/screens/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,7 +37,7 @@ class StateController extends GetxController {
   var orders = [].obs;
   var menus = [].obs;
   var meals = [].obs;
-  var featuredMeal = {}.obs;
+  var featuredMeal = [].obs;
   var planSetup = {};
 
   RxDouble subTotalPrice = 0.0.obs;
@@ -52,6 +53,8 @@ class StateController extends GetxController {
   var friCartList = [].obs;
   var satCartList = [].obs;
   var sunCartList = [].obs;
+
+  var noPlanDeliveryDate = "";
 
   ScrollController transactionsScrollController = ScrollController();
   ScrollController messagesScrollController = ScrollController();
@@ -76,7 +79,6 @@ class StateController extends GetxController {
 
       await FirebaseFirestore.instance
           .collection("products")
-          .limit(5)
           .get()
           .then((value) {
         setMealsData(value.docs);
@@ -164,6 +166,10 @@ class StateController extends GetxController {
     planSetup = data;
   }
 
+  saveNoPlanDeliveryDate(var date) {
+    noPlanDeliveryDate = date;
+  }
+
   setMenusData(var data) {
     menus.value = data;
   }
@@ -196,10 +202,10 @@ class StateController extends GetxController {
     deliveryInfo = map;
   }
 
-  addProductToCart2(userId, data, int quan) async {
+  addProductToCart(userId, data, int quan) async {
     try {
       // print("DATA CHECKINSON:: ${data['name']}");
-      _isItemAlreadyAdded(data, userId).then((res) {
+      await _isItemAlreadyAdded(data, userId).then((res) {
         if (res!) {
           Constants.toast("Item already added to cart!");
         } else {
@@ -210,7 +216,7 @@ class StateController extends GetxController {
               {
                 "id": itemId,
                 "productId": data['id'],
-                "category": data['category'],
+                "menu": data['menu'],
                 "name": data['name'],
                 "quantity": quan,
                 "price": data['price'],
@@ -223,16 +229,41 @@ class StateController extends GetxController {
           Constants.toast("Item successfully added to cart");
         }
       });
+
+      // Now update user data here
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(currentUser?.uid)
+          .get()
+          .then(
+            (value) => setUserData(
+              value.data(),
+            ),
+          );
     } catch (e) {
       debugPrint(e.toString());
     }
   }
 
-  // void removeCartItem(CartModel cartItem, userId) {
+  // void removeCartItem(var cartItem, userId) {
   //   FirebaseFirestore.instance.collection("users").doc("$userId").update({
-  //     "cart": FieldValue.arrayRemove([cartItem.toJson()])
+  //     "cart": FieldValue.arrayRemove([cartItem])
   //   });
   // }
+
+  // void emptyCart(var cartItems, userId) {
+  //   cartItems.forEach((element) {
+  //     FirebaseFirestore.instance.collection("users").doc("$userId").update({
+  //       "cart": FieldValue.arrayRemove([element])
+  //     });
+  //   });
+  // }
+
+  void removeCartItem(CartModel cartItem, userId) {
+    FirebaseFirestore.instance.collection("users").doc("$userId").update({
+      "cart": FieldValue.arrayRemove([cartItem.toJson()])
+    });
+  }
 
   void emptyCart(var cartItems, userId) {
     cartItems.forEach((element) {
@@ -254,42 +285,46 @@ class StateController extends GetxController {
   Future<bool?> _isItemAlreadyAdded(var data, var userId) async {
     bool _res = false;
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc("$userId")
-        .get()
-        .then((documentSnapshot) {
-      // print("DATA::DATA:: ${documentSnapshot.data()!['cart']!}");
-      print("DATY::DATY: ${documentSnapshot.data()!['cart']}");
-      //  List<CartModel> _list = CartModel.fromJson(jsonEncode("${documentSnapshot.data()!['cart']}")).toList();
-      documentSnapshot.data()!['cart'].forEach((v) {
-        if ((data['id']) == v['productId']) {
-          print('Added');
-          _res = true;
-        } else {
-          print('Not Yet Added');
-          _res = false;
-        }
-        print("VELO: ${v['price']}");
-        // cart!.add(CartModel.fromJson(v));
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc("${currentUser?.uid}")
+          .get()
+          .then((documentSnapshot) {
+        // print("DATA::DATA:: ${documentSnapshot.data()!['cart']!}");
+        print("DATY::DATY: ${documentSnapshot.data()}");
+        //  List<CartModel> _list = CartModel.fromJson(jsonEncode("${documentSnapshot.data()!['cart']}")).toList();
+        documentSnapshot.data()!['cart'].forEach((v) {
+          if ((data['id']) == v['productId']) {
+            print('Added');
+            _res = true;
+          } else {
+            print('Not Yet Added');
+            _res = false;
+          }
+          print("VELO: ${v['price']}");
+          // cart!.add(CartModel.fromJson(v));
+        });
       });
-    });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
 
     return _res;
   }
 
-  // void decreaseQuantity(CartModel item, userId) {
-  //   if (item.quantity == 1) {
-  //     removeCartItem(item, userId);
-  //   } else {
-  //     removeCartItem(item, userId);
-  //     item.quantity--;
+  void decreaseQuantity(CartModel item, userId) {
+    if (item.quantity == 1) {
+      removeCartItem(item, userId);
+    } else {
+      removeCartItem(item, userId);
+      item.quantity--;
 
-  //     FirebaseFirestore.instance.collection("users").doc("$userId").update({
-  //       "cart": FieldValue.arrayUnion([item.toJson()])
-  //     });
-  //   }
-  // }
+      FirebaseFirestore.instance.collection("users").doc("$userId").update({
+        "cart": FieldValue.arrayUnion([item.toJson()])
+      });
+    }
+  }
 
   Future<dynamic> addOrder(
       var cartItems, resp, userName, email, var userId) async {
@@ -329,7 +364,7 @@ class StateController extends GetxController {
             "image": element['image'],
             "paidAt": resp['data']['paid_at'],
             "productId": element['productId'],
-            "category": element['category'],
+            "menu": element['menu'],
             "cost": element['cost'],
             "quantity": element['quantity'],
             "deliveryInfo": deliveryInfo,
@@ -354,7 +389,7 @@ class StateController extends GetxController {
             "price": element['price'],
             "image": element['image'],
             "productId": element['productId'],
-            "category": element['category'],
+            "menu": element['menu'],
             "cost": element['cost'],
             "quantity": element['quantity'],
           }
@@ -371,7 +406,7 @@ class StateController extends GetxController {
             "price": element['price'],
             "image": element['image'],
             "productId": element['productId'],
-            "category": element['category'],
+            "menu": element['menu'],
             "cost": element['cost'],
             "quantity": element['quantity'],
           }.toString()
@@ -380,13 +415,13 @@ class StateController extends GetxController {
     });
   }
 
-  // void increaseQuantity(CartModel item, userId) {
-  //   removeCartItem(item, userId);
-  //   item.quantity++;
-  //   FirebaseFirestore.instance.collection("users").doc("$userId").update({
-  //     "cart": FieldValue.arrayUnion([item.toJson()])
-  //   });
-  // }
+  void increaseQuantity(CartModel item, userId) {
+    removeCartItem(item, userId);
+    item.quantity++;
+    FirebaseFirestore.instance.collection("users").doc("$userId").update({
+      "cart": FieldValue.arrayUnion([item.toJson()])
+    });
+  }
 
   void setAccessToken(String token) {
     accessToken.value = token;
@@ -401,31 +436,31 @@ class StateController extends GetxController {
   }
 
   void setMonCarts(var meals) {
-    monCartList.value = meals;
+    monCartList.value.add(meals);
   }
 
   void setTueCarts(var meals) {
-    tueCartList.value = meals;
+    tueCartList.value.add(meals);
   }
 
   void setWedCarts(var meals) {
-    wedCartList.value = meals;
+    wedCartList.value.add(meals);
   }
 
   void setThuCarts(var meals) {
-    thuCartList.value = meals;
+    thuCartList.value.add(meals);
   }
 
   void setFriCarts(var meals) {
-    friCartList.value = meals;
+    friCartList.value.add(meals);
   }
 
   void setSatCarts(var meals) {
-    satCartList.value = meals;
+    satCartList.value.add(meals);
   }
 
   void setSunCarts(var meals) {
-    sunCartList.value = meals;
+    sunCartList.value.add(meals);
   }
 
   void setShowPlan(bool state) {

@@ -25,7 +25,7 @@ class Product {
 List<Product> productList = [
   Product(
     name: "Sweet corn & beef protein",
-    image: "assets/images/dsc1.png",
+    image: "assets/images/food_item1.png",
     price: 3500,
     ingredients: ["bulgur", "wheat", "broccoli", "beef"],
     carbs: "50g",
@@ -37,7 +37,7 @@ List<Product> productList = [
   ),
   Product(
     name: "Sweet corn & beef protein",
-    image: "assets/images/dsc2.png",
+    image: "assets/images/food_item1.png",
     price: 4000,
     carbs: "50g",
     calories: "420",
@@ -61,7 +61,7 @@ List<Product> productList = [
   ),
   Product(
     name: "Sweet corn & beef protein",
-    image: "assets/images/dsc4.png",
+    image: "assets/images/food_item1.png",
     price: 5000,
     ingredients: ["bulgur", "wheat", "broccoli", "beef"],
     carbs: "50g",
@@ -73,7 +73,7 @@ List<Product> productList = [
   ),
   Product(
     name: "Sweet corn & beef protein",
-    image: "assets/images/dsc1.png",
+    image: "assets/images/food_item1.png",
     price: 5000,
     ingredients: ["bulgur", "wheat", "broccoli", "beef"],
     carbs: "50g",

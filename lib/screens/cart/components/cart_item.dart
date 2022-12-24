@@ -1,11 +1,17 @@
 import 'package:easyfit_app/helper/constants/constants.dart';
+import 'package:easyfit_app/helper/state/state_manager.dart';
 import 'package:easyfit_app/model/cart/cart_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
 
 class CartItem extends StatefulWidget {
   final CartModel model;
   var data;
-  CartItem({Key? key, required this.model, this.data}) : super(key: key);
+  CartItem({
+    Key? key,
+    this.data,
+    required this.model,
+  }) : super(key: key);
 
   @override
   State<CartItem> createState() => _CartItemState();
@@ -13,12 +19,10 @@ class CartItem extends StatefulWidget {
 
 class _CartItemState extends State<CartItem> {
   int _quantity = 1;
+  final _controller = Get.find<StateController>();
 
   @override
   Widget build(BuildContext context) {
-    // final cart = Provider.of<CartNotifier>(context);
-    // final user = Provider.of<UserNotifier>(context);
-
     return
         // user.carts == null
         //     ? CartShimmer()
@@ -37,10 +41,10 @@ class _CartItemState extends State<CartItem> {
               ),
             ),
             child: Center(
-              child: Image.asset(
+              child: Image.network(
                 '${widget.model.image ?? widget.data['image']}',
                 errorBuilder: (context, error, stackTrace) => Image.asset(
-                  "assets/images/bottle_placeholder.png",
+                  "assets/images/placeholder.png",
                   fit: BoxFit.cover,
                   width: MediaQuery.of(context).size.width * 0.21,
                 ),
@@ -92,7 +96,7 @@ class _CartItemState extends State<CartItem> {
                       ],
                     ),
                     Text(
-                        '${Constants.nairaSign(context).currencySymbol} ${Constants.formatMoney(widget.model.price)}'),
+                        '${Constants.nairaSign(context).currencySymbol}${Constants.formatMoney(widget.model.price)}'),
                   ],
                 ),
                 Column(
@@ -105,7 +109,8 @@ class _CartItemState extends State<CartItem> {
                       children: [
                         InkWell(
                           onTap: () {
-                            // cart.removeCartItem(widget.model);
+                            _controller.removeCartItem(
+                                widget.model, _controller.currentUser?.uid);
                           },
                           child: const Padding(
                             padding: EdgeInsets.all(5.0),
@@ -125,7 +130,12 @@ class _CartItemState extends State<CartItem> {
                         InkWell(
                           onTap: () {
                             if (widget.model.quantity > 1) {
-                              // cart.decreaseQuantity(widget.model);
+                              _controller.setLoading(true);
+                              _controller.decreaseQuantity(
+                                  widget.model, _controller.currentUser?.uid);
+                              Future.delayed(const Duration(seconds: 3), () {
+                                _controller.setLoading(false);
+                              });
                             }
                           },
                           child: Container(
@@ -150,11 +160,19 @@ class _CartItemState extends State<CartItem> {
                         ),
                         InkWell(
                           onTap: () {
-                            // cart.increaseQuantity(widget.model);
+                            print("USER ID:: ${_controller.currentUser?.uid}");
+                            _controller.setLoading(true);
+                            _controller.increaseQuantity(
+                                widget.model, _controller.currentUser?.uid);
+                            Future.delayed(const Duration(seconds: 3), () {
+                              _controller.setLoading(false);
+                            });
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 0.0),
+                              horizontal: 8,
+                              vertical: 0.0,
+                            ),
                             color: Constants.primaryColor,
                             child: const Text(
                               "+",

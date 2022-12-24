@@ -1,14 +1,19 @@
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/model/orders/ordersmodel.dart';
+import '../buy_again.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+
+import '../../../components/text_components.dart';
+import '../../../helper/constants/constants.dart';
+import '../../../model/orders/ordersmodel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class OrderDialog extends StatelessWidget {
-  final OrdersModel order;
-  const OrderDialog({
+  final OrdersModel? order;
+  var data;
+   OrderDialog({
     Key? key,
-    required this.order,
+     this.order,
+     required this.data,
   }) : super(key: key);
 
   @override
@@ -59,7 +64,7 @@ class OrderDialog extends StatelessWidget {
           const SizedBox(
             height: 10.0,
           ),
-          Padding(
+          Padding( 
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -67,7 +72,7 @@ class OrderDialog extends StatelessWidget {
               children: [
                 ClipOval(
                   child: Image.asset(
-                    order.product.image,
+                    order.,
                     fit: BoxFit.cover,
                     width: MediaQuery.of(context).size.width * 0.33,
                     height: MediaQuery.of(context).size.width * 0.33,
@@ -76,15 +81,15 @@ class OrderDialog extends StatelessWidget {
                 const SizedBox(
                   height: 10.0,
                 ),
-                const Text(
-                  "LOW CI",
-                  style: TextStyle(
+                 Text(
+                  "${order?.menu ?? data['menu']}",
+                  style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
                   ),
                 ),
                 Text(
-                  "${order.product.name}",
+                  "${order?.name ?? data['name']}",
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 17,
@@ -92,7 +97,7 @@ class OrderDialog extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${Constants.nairaSign(context).currencySymbol} ${Constants.formatMoney(order.product.price)}',
+                  '${Constants.nairaSign(context).currencySymbol} ${Constants.formatMoney(order?.price ?? data['price'])}',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Constants.primaryColor,
@@ -103,13 +108,13 @@ class OrderDialog extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Navigator.of(context).pop();
-                    // pushNewScreen(
-                    //   context,
-                    //   screen: BuyAgain(
-                    //       productId: model?.name ?? data['productId'],
-                    //       manager: manager),
-                    // );
+                    Navigator.of(context).pop();
+                    pushNewScreen(
+                      context,
+                      screen: BuyAgain(
+                          productId: model?.name ?? data['productId'],
+                          manager: manager),
+                    );
                   },
                   child: const Text('BUY AGAIN'),
                   style: ElevatedButton.styleFrom(

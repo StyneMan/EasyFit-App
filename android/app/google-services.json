@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "221357149489",
-    "project_id": "delcripsapp",
-    "storage_bucket": "delcripsapp.appspot.com"
+    "project_number": "943490645862",
+    "project_id": "easyfit-44395",
+    "storage_bucket": "easyfit-44395.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:221357149489:android:7e08bbca2079535c09b410",
+        "mobilesdk_app_id": "1:943490645862:android:80cb8fad2430a7be9f12a7",
         "android_client_info": {
           "package_name": "com.easyfit.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "221357149489-654cjt33fghhh5eo1fs1urdadf20f58e.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.easyfit.app",
-            "certificate_hash": "b816c66186fa4e8a677aa5870c3373ef8707120c"
-          }
-        },
-        {
-          "client_id": "221357149489-3t18o609kn2n4euarr8uq6qqqfpk25up.apps.googleusercontent.com",
+          "client_id": "943490645862-d4gttvntomnlk3thcpgebpsi720v7791.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCqkY2kWFVWAZkh94O3g7N7k8NxX2Rme74"
+          "current_key": "AIzaSyAz5Q5PaKM29N0xRqs6MGnMS51lHDcglrA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "221357149489-3t18o609kn2n4euarr8uq6qqqfpk25up.apps.googleusercontent.com",
+              "client_id": "943490645862-d4gttvntomnlk3thcpgebpsi720v7791.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

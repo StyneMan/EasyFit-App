@@ -302,7 +302,8 @@ class _PaymentMethodState extends State<PaymentMethod> {
             width: double.infinity,
             child: TextButton(
               onPressed: () {
-                // _controller.jumpTo(1);
+                Navigator.of(context).pop(context);
+                Navigator.of(context).pop(context);
               },
               child: const Text('Go back to cart',
                   style: TextStyle(color: Colors.white)),
@@ -317,20 +318,19 @@ class _PaymentMethodState extends State<PaymentMethod> {
           Container(
             decoration: BoxDecoration(
               border: Border.all(
-                  style: BorderStyle.solid,
-                  width: 1.0,
-                  color: Constants.primaryColor),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(4.0),
+                style: BorderStyle.solid,
+                width: 1.0,
+                color: Constants.primaryColor,
               ),
+              borderRadius: const BorderRadius.all(Radius.circular(4.0)),
             ),
             width: double.infinity,
             child: TextButton(
               onPressed: () {
-                // _controller.jumpTo(0);
+                _controller.tabController.jumpToTab(0);
               },
               child: const Text(
-                'Continue shopping',
+                'Explore more meals',
                 style: TextStyle(color: Constants.primaryColor),
               ),
               style: TextButton.styleFrom(

@@ -56,8 +56,8 @@ class _ListComponentState extends State<ListComponent> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    final double itemHeight = (size.height - kToolbarHeight - 18) / 2.5;
-    final double itemWidth = size.width / 2;
+    final double itemHeight = (size.height - kToolbarHeight - 18) / 3.8;
+    final double itemWidth = size.width / 2.5;
 
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -131,7 +131,7 @@ class _ListComponentState extends State<ListComponent> {
                     crossAxisCount: 2,
                     mainAxisSpacing: 10.0,
                     crossAxisSpacing: 10.0,
-                    childAspectRatio: (itemHeight / itemHeight),
+                    childAspectRatio: (itemWidth / itemHeight),
                   ),
                   itemBuilder: (context, index) => TextButton(
                     onPressed: () {

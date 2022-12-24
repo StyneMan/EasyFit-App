@@ -14,7 +14,8 @@ class Constants {
   static const Color shimmerBaseColor = Color.fromARGB(255, 203, 203, 203);
   static const Color shimmerHighlightColor = Colors.white;
 
-  static String pstk = "pk_test_043683268da92cd71e0d30f9d72396396f2dfb1f";
+  // static String pstk = "pk_test_043683268da92cd71e0d30f9d72396396f2dfb1f";
+  static String pstk = "pk_test_80049c5b3452471f42a2a1b972e638c7ccad240d";
 
   static String formatMoney(int amt) {
     MoneyFormatter fmf = MoneyFormatter(

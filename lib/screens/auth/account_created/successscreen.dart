@@ -139,13 +139,9 @@ class _AccountSuccessState extends State<AccountSuccess> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Image.asset(
-                  //   "assets/images/smiley.png",
-                  //   fit: BoxFit.cover,
-                  // ),
                   const Icon(
                     CupertinoIcons.check_mark_circled_solid,
-                    size: 48,
+                    size: 72,
                     color: Colors.green,
                   ),
                   TextPoppins(
@@ -159,16 +155,16 @@ class _AccountSuccessState extends State<AccountSuccess> {
                   const SizedBox(
                     height: 2.0,
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.80,
-                    child: TextPoppins(
-                      text:
-                          "You’re a few clicks away to staying on track with your nutrition goals",
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      align: TextAlign.center,
-                    ),
-                  ),
+                  // SizedBox(
+                  //   width: MediaQuery.of(context).size.width * 0.80,
+                  //   child: TextPoppins(
+                  //     text:
+                  //         "You’re a few clicks away to staying on track with your nutrition goals",
+                  //     fontSize: 14,
+                  //     fontWeight: FontWeight.w500,
+                  //     align: TextAlign.center,
+                  //   ),
+                  // ),
                 ],
               ),
             ),

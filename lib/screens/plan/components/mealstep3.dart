@@ -26,6 +26,13 @@ class _MealStep3State extends State<MealStep3> {
   int _counter = 1;
   DateTime _dateTime = DateTime.now();
   String _deliveryTime = "Morning (8am - 10am)";
+  String _deliveryTime2 = "Morning (8am - 10am)";
+  String _deliveryTime3 = "Morning (8am - 10am)";
+  final List<String> _periods = [
+    "Morning (08am - 10am)",
+    "Afternoon (12pm - 01pm)",
+    "Evening (04pm - 06pm)",
+  ];
 
   @override
   void initState() {
@@ -89,79 +96,57 @@ class _MealStep3State extends State<MealStep3> {
                     ],
                   ),
                   const SizedBox(
-                    width: 4.0,
+                    width: 5.0,
                   ),
                   Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RadioListTile(
-                          value: "Morning (08am - 10am)",
-                          groupValue: val,
-                          contentPadding: const EdgeInsets.all(2.0),
-                          title: TextPoppins(
-                            text: "Morning (08am - 10am)",
-                            fontSize: 13,
-                            color: Constants.primaryColor,
-                          ),
-                          onChanged: (value) {
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                      ),
+                      child: DropdownButton(
+                        hint: TextPoppins(
+                            text: index == 0
+                                ? _deliveryTime
+                                : index == 1
+                                    ? _deliveryTime2
+                                    : _deliveryTime3,
+                            fontSize: 13),
+                        items: _periods.map((e) {
+                          return DropdownMenuItem(
+                            value: e,
+                            child: Text(e),
+                          );
+                        }).toList(),
+                        // value: _selectedDay,
+                        onChanged: (newValue) {
+                          if (index == 0) {
                             setState(() {
-                              _deliveryTime = value.toString();
+                              _deliveryTime = (newValue as String?)!;
                             });
-                          },
-                        ),
-                        RadioListTile(
-                          value: "Afternoon (12pm - 01pm)",
-                          groupValue: _deliveryTime,
-                          contentPadding: const EdgeInsets.all(2.0),
-                          onChanged: (value) {
+                          } else if (index == 1) {
                             setState(() {
-                              _deliveryTime = value.toString();
+                              _deliveryTime2 = (newValue as String?)!;
                             });
-                          },
-                          title: TextPoppins(
-                            text: "Afternoon (12pm - 01pm)",
-                            fontSize: 13,
-                            color: Constants.primaryColor,
-                          ),
-                        ),
-                        RadioListTile(
-                          value: "Evening (04pm - 06pm)",
-                          groupValue: _deliveryTime,
-                          contentPadding: const EdgeInsets.all(2.0),
-                          onChanged: (value) {
+                          } else {
                             setState(() {
-                              _deliveryTime = value.toString();
+                              _deliveryTime3 = (newValue as String?)!;
                             });
-                          },
-                          title: TextPoppins(
-                            text: "Evening (04pm - 06pm)",
-                            fontSize: 13,
-                            color: Constants.primaryColor,
-                          ),
-                        ),
-                      ],
+                          }
+                          // setState(() {
+                          //   val = "$index${(newValue as String?)}";
+
+                          //   // _dayQuantity = quans![0].quantity;
+                          //   // _selectedCity = _cities[0]['cities'][0];
+                          // });
+                        },
+                        icon: const Icon(Icons.arrow_drop_down),
+                        iconSize: 34,
+                        isExpanded: true,
+                        underline: const SizedBox(),
+                      ),
                     ),
-                  )
-                  // TimePickerSpinner(
-                  //   is24HourMode: false,
-                  //   normalTextStyle:
-                  //       const TextStyle(fontSize: 16, color: Colors.grey),
-                  //   highlightedTextStyle: const TextStyle(
-                  //     fontSize: 16,
-                  //     color: Constants.primaryColor,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  //   spacing: 5,
-                  //   itemHeight: 20,
-                  //   isForce2Digits: true,
-                  //   onTimeChange: (time) {
-                  //     setState(() {
-                  //       _dateTime = time;
-                  //     });
-                  //   },
-                  // )
+                  ),
                 ],
               ),
             );
@@ -172,32 +157,7 @@ class _MealStep3State extends State<MealStep3> {
         const SizedBox(
           height: 28.0,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: SizedBox(
-                child: TextPoppins(
-                  text: "Receive the same number of meals per delivery?",
-                  fontSize: 14,
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 8.0,
-            ),
-            CupertinoSwitch(
-              value: _isActive,
-              activeColor: Constants.primaryColor,
-              onChanged: (val) {
-                setState(() {
-                  _isActive = val;
-                });
-              },
-            ),
-          ],
-        ),
+
         const SizedBox(
           height: 16.0,
         ),

@@ -1,13 +1,13 @@
 import 'package:country_code_picker/country_code_picker.dart';
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/helper/state/state_manager.dart';
-import 'package:easyfit_app/screens/auth/otp/verifyotp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
-import 'package:page_transition/page_transition.dart';
+
+import '../../components/text_components.dart';
+import '../../helper/constants/constants.dart';
+import '../../helper/state/state_manager.dart';
+import '../../screens/auth/otp/verifyotp.dart';
 
 typedef InitCallback(bool params);
 
@@ -65,8 +65,9 @@ class _SignupFormState extends State<SignupForm> {
       }
     }
 
+    final _auth = FirebaseAuth.instance;
+
     try {
-      final _auth = FirebaseAuth.instance;
       final resp = await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
@@ -91,6 +92,7 @@ class _SignupFormState extends State<SignupForm> {
             print("${e.code} - ${e.message}");
             Constants.toast('${e.message}');
           }
+          _auth.currentUser?.delete();
         },
         codeSent: (String verificationId, int? resendToken) {
           _controller.setLoading(false);
@@ -116,9 +118,30 @@ class _SignupFormState extends State<SignupForm> {
       );
       // _auth.verifyPhoneNumber(phoneNumber: _phoneController.text, verificationCompleted: null, verificationFailed: verificationFailed, codeSent: codeSent, codeAutoRetrievalTimeout: codeAutoRetrievalTimeout)
     } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case "email-already-in-use":
+          Constants.toast('Email address already in use');
+          break;
+        case "invalid-email":
+          Constants.toast('Email is not valid. Try again');
+          break;
+        case "weak-password":
+          Constants.toast('Password too weak. Use a stronger password');
+          break;
+        case "expired-action-code":
+          Constants.toast('The OTP code has expired.');
+          break;
+        case "invalid-action-code":
+          Constants.toast('Incorrect code entered.');
+          break;
+        default:
+          Constants.toast('${e.message}');
+      }
       _controller.setLoading(false);
-      Constants.toast('${e.message}');
-      print("ERR:: ${e.code} - ${e.message}");
+      _auth.currentUser?.delete();
+      // Constants.toast('${e.message}');
+      // print("ERR:: ${e.code} - ${e.message}");
+
     }
   }
 

@@ -1,7 +1,10 @@
 import 'package:easyfit_app/components/text_components.dart';
 import 'package:easyfit_app/helper/constants/constants.dart';
+import 'package:easyfit_app/helper/state/state_manager.dart';
 import 'package:easyfit_app/screens/auth/otp/verifyotp.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
 import 'package:page_transition/page_transition.dart';
 
 class PasswordForm extends StatefulWidget {
@@ -13,8 +16,38 @@ class PasswordForm extends StatefulWidget {
 
 class _PasswordFormState extends State<PasswordForm> {
   final TextEditingController _emailController = TextEditingController();
-
+  final _controller = Get.find<StateController>();
   final _formKey = GlobalKey<FormState>();
+
+  _forgotPass() async {
+    _controller.setLoading(true);
+    final _auth = FirebaseAuth.instance;
+    try {
+      await _auth.sendPasswordResetEmail(email: _emailController.text);
+      _controller.setLoading(false);
+      Navigator.of(context).push(
+        PageTransition(
+          type: PageTransitionType.size,
+          alignment: Alignment.bottomCenter,
+          child: VerifyOTP(
+            caller: "Password",
+          ),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case "user-not-found":
+          Constants.toast("Email not registered on the platform");
+          break;
+        case "invalid-email":
+          Constants.toast('Email is not valid. Try again');
+          break;
+        default:
+          Constants.toast('${e.message}');
+      }
+      _controller.setLoading(false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,16 +108,7 @@ class _PasswordFormState extends State<PasswordForm> {
             child: ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  //Now go to otp page
-                  Navigator.of(context).push(
-                    PageTransition(
-                      type: PageTransitionType.size,
-                      alignment: Alignment.bottomCenter,
-                      child: VerifyOTP(
-                        caller: "Password",
-                      ),
-                    ),
-                  );
+                  _forgotPass();
                 }
               },
               child: TextPoppins(

@@ -70,6 +70,10 @@ class _State extends State<VerifyOTP> {
           if (e.code == 'invalid-phone-number') {
             print('The provided phone number is not valid.');
             Constants.toast('The provided phone number is not valid.');
+          } else if (e.code == "expired-action-code") {
+            Constants.toast('The code has expired. Try again.');
+          } else if (e.code == "invalid-action-code") {
+            Constants.toast('Incorrect code entered.');
           } else {
             print("${e.code} - ${e.message}");
             Constants.toast('${e.message}');
@@ -100,34 +104,40 @@ class _State extends State<VerifyOTP> {
           verificationId: widget.verificationId!, smsCode: smsCode);
       //  .getCredential(
       //     verificationId: verificationId, smsCode: smsCode);
-      auth.currentUser?.linkWithCredential(_credential).then((result) async {
-        await FirebaseFirestore.instance.collection("users").add({
-          "name": widget.name,
-          "id": auth.currentUser?.uid,
-          "email": widget.email,
-          "phone": widget.phone,
-          "isActive": true,
-          "cart": [],
-          "orders": [],
-          "dob": "",
-          "address": "",
-          "image": "",
-          "preference": null
-        });
-
-        _controller.setLoading(false);
-        _manager?.setIsLoggedIn(true);
-
-        Navigator.of(context).pushReplacement(
-          PageTransition(
-            type: PageTransitionType.size,
-            alignment: Alignment.bottomCenter,
-            child: const AccountSuccess(),
-          ),
-        );
-      }).catchError((e) {
-        print(e);
+      auth.currentUser?.linkWithCredential(_credential);
+      // .then((result) async {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc("${auth.currentUser?.uid}")
+          .set({
+        "name": widget.name,
+        "id": auth.currentUser?.uid,
+        "email": widget.email,
+        "phone": widget.phone,
+        "isActive": true,
+        "cart": [],
+        "orders": [],
+        "address": "",
+        "landmark": "",
+        "image": "",
+        "planInfo": null,
+        "preference": null
       });
+
+      _controller.setLoading(false);
+      _manager?.setIsLoggedIn(true);
+
+      Navigator.of(context).pushReplacement(
+        PageTransition(
+          type: PageTransitionType.size,
+          alignment: Alignment.bottomCenter,
+          child: const AccountSuccess(),
+        ),
+      );
+      // })
+      // .catchError((e) {
+      //   print(e);
+      // });
     } on FirebaseAuthException catch (e) {
       _controller.setLoading(false);
       switch (e.code) {
@@ -140,6 +150,12 @@ class _State extends State<VerifyOTP> {
         case "credential-already-in-use":
           Constants.toast(
               "Credential associated with a different user account. Use another phone number");
+          break;
+        case "account-exists-with-different-credential":
+          Constants.toast("Email address has already been used");
+          break;
+        case "user-not-found":
+          Constants.toast("No user found with the given email");
           break;
         // See the API reference for the full list of error codes.
         default:

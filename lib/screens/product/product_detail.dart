@@ -1,10 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easyfit_app/components/shimmer/banner_shimmer.dart';
+import 'package:easyfit_app/model/mealplan/mealmodel.dart';
+import 'package:easyfit_app/screens/plan/components/assign_dialog.dart';
+import 'package:easyfit_app/screens/product/components/assigner.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:get/instance_manager.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
@@ -38,15 +42,9 @@ class _ProductDetailState extends State<ProductDetail> {
 
   int _count = 1;
 
-  String _selectedDay = "";
-  String _errorMessage = "";
-  String _dayQuantity = "1";
-
   _add(context) {
     if (_user != null) {
       _controller.setQuantity(_controller.itemQuantity.value + 1);
-    } else {
-      // CartNavigator.gotoCart(context: context, manager: manager);
     }
   }
 
@@ -63,7 +61,7 @@ class _ProductDetailState extends State<ProductDetail> {
   _addToCart(context) {
     if (_user != null) {
       if (_controller.planSetup.isEmpty) {
-        _controller.addProductToCart2(
+        _controller.addProductToCart(
             _user?.uid, widget.data, _controller.itemQuantity.value);
         Future.delayed(const Duration(seconds: 1), () {
           pushNewScreen(
@@ -102,123 +100,22 @@ class _ProductDetailState extends State<ProductDetail> {
           ),
           backgroundColor: Colors.transparent,
           builder: (context) => SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4,
-            child: _assigner(_controller.planSetup["selectedDays"]),
-            // PlanBottomSheet(
-            //   manager: widget.manager,
-            //   mealsArr: _mealsArr,
-            //   selectedPlan: _selectedPlan,
-            //   selectedDays: _selectedDays,
-            //   totalMeal: _totalMeals,
-            // ),
+            height: MediaQuery.of(context).size.height * 0.275,
+            child: Assigner(
+              selectedDays: _controller.planSetup["selectedDays"],
+              product: widget.data,
+              manager: widget.manager,
+            ),
           ),
         );
       }
     }
   }
 
-  Widget _assigner(
-    selectedDays,
-  ) {
-    return ListView(
-      padding: const EdgeInsets.all(10.0),
-      children: [
-        TextPoppins(
-            text: "Total meals for ${_selectedDay} is $_dayQuantity",
-            fontSize: 14),
-        const SizedBox(
-          height: 4.0,
-        ),
-        TextPoppins(
-          text: _errorMessage,
-          fontSize: 12,
-          color: Colors.red,
-        ),
-        const SizedBox(
-          height: 10.0,
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-          ),
-          child: DropdownButton(
-            hint: Text(
-              _selectedDay,
-            ),
-            items: _controller.planSetup['meals']?.map((e) {
-              return DropdownMenuItem(
-                value: e['day'],
-                child: Text("${e['day']}"),
-              );
-            }).toList(),
-            value: _selectedDay,
-            onChanged: (newValue) {
-              var quans = _controller.planSetup['meals']
-                  .where((element) => element['day'] == newValue as String?)
-                  .toList();
-              // print("HJS JS :: $_cities");
-              setState(() {
-                _selectedDay = (newValue as String?)!;
-                _dayQuantity = quans[0]['quantity'];
-                // _selectedCity = _cities[0]['cities'][0];
-              });
-              switch (_selectedDay) {
-                case "Mon":
-                  if (_controller.monCartList.value.length <
-                      quans[0]['quantity']) {
-                    //Good add more
-                    setState(() {
-                      _errorMessage = "";
-                    });
-                  } else {
-                    setState(() {
-                      _errorMessage =
-                          "$_selectedDay is filled. Required ${quans[0]['quantity']} meal${_pluralizer(quans[0]['quantity'])}";
-                    });
-                  }
-                  break;
-                case "Tue":
-                  if (_controller.tueCartList.value.length <
-                      quans[0]['quantity']) {
-                    //Good add more
-                    setState(() {
-                      _errorMessage = "";
-                    });
-                  } else {
-                    setState(() {
-                      _errorMessage =
-                          "$_selectedDay is filled. Required ${quans[0]['quantity']} meal${_pluralizer(quans[0]['quantity'])}";
-                    });
-                  }
-                  break;
-                default:
-              }
-            },
-            icon: const Icon(Icons.arrow_drop_down),
-            iconSize: 34,
-            isExpanded: true,
-            underline: const SizedBox(),
-          ),
-        ),
-        const SizedBox(height: 16.0),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {},
-            child: TextPoppins(text: "Continue", fontSize: 14),
-          ),
-        ),
-      ],
-    );
-  }
-
-  _pluralizer(int num) {
-    return num > 1 ? "s" : "";
-  }
-
   @override
   Widget build(BuildContext context) {
+    // print("hHHJHS:: ${_controller.planSetup['meals'][0]["day"]}");
+
     return Obx(
       () => Scaffold(
         key: _scaffoldKey,
@@ -316,27 +213,31 @@ class _ProductDetailState extends State<ProductDetail> {
           children: [
             Expanded(
               flex: 2,
-              child: PinchZoom(
-                child: Image.asset(
-                  '${widget.data['image']}',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => Image.asset(
-                    "assets/images/placeholder.png",
+              child: SizedBox(
+                width: double.infinity,
+                child: PinchZoom(
+                  child: CachedNetworkImage(
+                    imageUrl: '${widget.data['image']}',
                     fit: BoxFit.cover,
+                    progressIndicatorBuilder: (context, url, prog) =>
+                        const Center(
+                      child: BannerShimmer(),
+                    ),
+                    errorWidget: (context, err, st) => const BannerShimmer(),
                   ),
+                  resetDuration: const Duration(milliseconds: 100),
+                  maxScale: 2.5,
+                  onZoomStart: () {
+                    if (kDebugMode) {
+                      print('Start zooming');
+                    }
+                  },
+                  onZoomEnd: () {
+                    if (kDebugMode) {
+                      print('Stop zooming');
+                    }
+                  },
                 ),
-                resetDuration: const Duration(milliseconds: 100),
-                maxScale: 2.5,
-                onZoomStart: () {
-                  if (kDebugMode) {
-                    print('Start zooming');
-                  }
-                },
-                onZoomEnd: () {
-                  if (kDebugMode) {
-                    print('Stop zooming');
-                  }
-                },
               ),
             ),
             Expanded(
@@ -378,13 +279,14 @@ class _ProductDetailState extends State<ProductDetail> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 21.0),
+                          const SizedBox(height: 16.0),
                           TextPoppins(
                             text: widget.data['description'],
+                            color: Colors.black,
                             fontSize: 14,
                           ),
                           const SizedBox(
-                            height: 18,
+                            height: 12,
                           ),
                           const Text(
                             "Ingredients",
@@ -397,13 +299,15 @@ class _ProductDetailState extends State<ProductDetail> {
                             ),
                           ),
                           const SizedBox(
-                            height: 5.0,
+                            height: 2.0,
                           ),
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, i) => TextPoppins(
-                              text: widget.data['ingredients'][i].capitalize!,
+                              text: widget.data['ingredients'][i]
+                                  .toString()
+                                  .capitalize!,
                               fontSize: 14,
                             ),
                             itemCount: widget.data['ingredients'].length,
@@ -502,33 +406,38 @@ class _ProductDetailState extends State<ProductDetail> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      _minus(context);
-                                    },
-                                    icon: const Icon(
-                                      CupertinoIcons.minus,
-                                      color: Constants.primaryColor,
+                              _controller.meals.value.isNotEmpty
+                                  ? const SizedBox()
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            _minus(context);
+                                          },
+                                          icon: const Icon(
+                                            CupertinoIcons.minus,
+                                            color: Constants.primaryColor,
+                                          ),
+                                        ),
+                                        TextPoppins(
+                                            text:
+                                                "${_controller.itemQuantity.value}",
+                                            fontSize: 16),
+                                        IconButton(
+                                          onPressed: () {
+                                            _add(context);
+                                          },
+                                          icon: const Icon(
+                                            CupertinoIcons.add,
+                                            color: Constants.primaryColor,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  TextPoppins(
-                                      text: "${_controller.itemQuantity.value}",
-                                      fontSize: 16),
-                                  IconButton(
-                                    onPressed: () {
-                                      _add(context);
-                                    },
-                                    icon: const Icon(
-                                      CupertinoIcons.add,
-                                      color: Constants.primaryColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: () {

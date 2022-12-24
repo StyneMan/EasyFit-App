@@ -1,3 +1,5 @@
+import 'package:easyfit_app/model/mealplan/mealmodel.dart';
+import 'package:easyfit_app/screens/payment/payment_method.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,8 +11,6 @@ import '../../components/text_components.dart';
 import '../../helper/constants/constants.dart';
 import '../../helper/preference/preference_manager.dart';
 import '../../helper/state/state_manager.dart';
-import '../payment/payment_method.dart';
-import 'home_delivery.dart';
 
 class DeliveryMode extends StatelessWidget {
   final PreferenceManager manager;
@@ -51,7 +51,7 @@ class DeliveryMode extends StatelessWidget {
           ],
         ),
         title: TextPoppins(
-          text: "Delivery Method".toUpperCase(),
+          text: "Delivery Info".toUpperCase(),
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: Constants.secondaryColor,
@@ -77,104 +77,108 @@ class DeliveryMode extends StatelessWidget {
           manager: manager,
         ),
       ),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        width: double.infinity,
-        height: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                ClipOval(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.40,
-                    height: MediaQuery.of(context).size.width * 0.40,
-                    padding: const EdgeInsets.all(36.0),
-                    color: Constants.accentColor,
-                    child: SvgPicture.asset(
-                      'assets/images/carbon_delivery.svg',
-                      color: Constants.primaryColor,
-                    ),
-                  ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        children: [
+          Center(
+            child: ClipOval(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.36,
+                height: MediaQuery.of(context).size.width * 0.36,
+                padding: const EdgeInsets.all(36.0),
+                color: Constants.accentColor,
+                child: SvgPicture.asset(
+                  'assets/images/carbon_delivery.svg',
+                  color: Constants.primaryColor,
                 ),
-                const SizedBox(height: 16.0),
-                TextPoppins(
-                  text: 'Choose Delivery Method',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                ),
-              ],
+              ),
             ),
-            const SizedBox(height: 24.0),
-            Column(
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(6.0)),
+          ),
+          const SizedBox(height: 21.0),
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, i) {
+              final _addressController = TextEditingController();
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextPoppins(
+                        text:
+                            "${Plan.fromJson(_controller.planSetup).meals?.elementAt(i).day}",
+                        fontSize: 14,
+                      ),
+                      const SizedBox(
+                        width: 10.0,
+                      ),
+                      TextRoboto(
+                        text:
+                            "${Plan.fromJson(_controller.planSetup).meals?.elementAt(i).quantity} meals",
+                        fontSize: 14,
+                      ),
+                    ],
                   ),
-                  width: double.infinity,
-                  child: TextButton(
-                    onPressed: () {
-                      // cart.setDeliveryType("Pickup");
-                      pushNewScreen(
-                        context,
-                        screen: PaymentMethod(manager: manager),
-                        withNavBar: true, // OPTIONAL VALUE. True by default.
-                        pageTransitionAnimation:
-                            PageTransitionAnimation.cupertino,
-                      );
-                    },
-                    child: TextPoppins(
-                      text: 'PICKUP FROM SHOP',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.all(16.0),
-                      backgroundColor: Constants.primaryColor,
-                    ),
+                  const SizedBox(
+                    width: 10.0,
                   ),
-                ),
-                const SizedBox(height: 16.0),
-                Container(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                  ),
-                  width: double.infinity,
-                  child: TextButton(
-                    onPressed: () {
-                      // cart.setDeliveryType("Door Delivery");
-                      pushNewScreen(
-                        context,
-                        screen: HomeDelivery(
-                          manager: manager,
-                        ),
-                        withNavBar: true, // OPTIONAL VALUE. True by default.
-                        pageTransitionAnimation:
-                            PageTransitionAnimation.cupertino,
-                      );
-                    },
-                    child: TextPoppins(
-                      text: 'HOME DELIVERY',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.all(16.0),
-                      backgroundColor: Colors.black54,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    child: TextFormField(
+                      controller: _addressController,
+                      keyboardType: TextInputType.name,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: const InputDecoration(
+                        filled: false,
+                        hintText: 'Delivery Address',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your address';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                ),
-              ],
+                ],
+              );
+            },
+            separatorBuilder: (context, index) => const Divider(),
+            itemCount: Plan.fromJson(_controller.planSetup).meals!.length,
+          ),
+          const SizedBox(
+            height: 16.0,
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                _payment(context);
+              },
+              child: TextPoppins(text: "Continue to payment", fontSize: 14),
             ),
-          ],
-        ),
+          )
+        ],
       ),
     );
+  }
+
+  _payment(context) {
+    _controller.setLoading(true);
+    Future.delayed(const Duration(seconds: 3), () {
+      _controller.setLoading(false);
+      pushNewScreen(
+        context,
+        screen: PaymentMethod(
+          manager: manager,
+        ),
+        withNavBar: true, // OPTIONAL VALUE. True by default.
+        pageTransitionAnimation: PageTransitionAnimation.cupertino,
+      );
+    });
   }
 }

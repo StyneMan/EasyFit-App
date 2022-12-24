@@ -4,7 +4,6 @@ import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:easyfit_app/helper/preference/preference_manager.dart';
 import 'package:easyfit_app/helper/state/state_manager.dart';
 import 'package:easyfit_app/screens/auth/forgotPass/forgotPass.dart';
-import 'package:easyfit_app/screens/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -57,9 +56,25 @@ class _LoginFormState extends State<LoginForm> {
         ),
       );
     } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case "user-not-found":
+          Constants.toast("Account does not exist");
+          break;
+        case "wrong-password":
+          Constants.toast("Incorrect credentials. Try again");
+          break;
+        case "user-disabled":
+          Constants.toast("Your account is under suspension");
+          break;
+        case "invalid-email":
+          Constants.toast(
+              "Invalid email provided. Check your email and try again");
+          break;
+        default:
+      }
       _controller.setLoading(false);
-      print(e.message);
-      Constants.toast("${e.message}");
+      // print(e.message);
+      // Constants.toast("${e.message}");
     }
   }
 
@@ -174,7 +189,7 @@ class _LoginFormState extends State<LoginForm> {
                     PageTransition(
                       type: PageTransitionType.size,
                       alignment: Alignment.bottomCenter,
-                      child: const ForgotPassword(),
+                      child: ForgotPassword(),
                     ),
                   );
                 },

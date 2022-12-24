@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../../components/shimmer/banner_shimmer.dart';
-import '../../../components/shimmer/image_shimmer.dart';
 import '../../../components/text_components.dart';
 import '../../../helper/constants/constants.dart';
 import '../../../helper/preference/preference_manager.dart';
@@ -27,8 +26,10 @@ class ProductCard extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             PageTransition(
-              type: PageTransitionType.size,
+              duration: const Duration(milliseconds: 500),
+              type: PageTransitionType.bottomToTopJoined,
               alignment: Alignment.bottomCenter,
+              childCurrent: this,
               child: ProductDetail(manager: manager, data: data),
             ),
           );
@@ -50,7 +51,7 @@ class ProductCard extends StatelessWidget {
                       imageUrl: '${data['image']}',
                       progressIndicatorBuilder: (context, url, prog) =>
                           const Center(
-                        child: ImageShimmer(),
+                        child: BannerShimmer(),
                       ),
                       errorWidget: (context, err, st) => const BannerShimmer(),
                     ),

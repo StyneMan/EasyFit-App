@@ -136,14 +136,19 @@ class Home extends StatelessWidget {
         children: [
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.275,
-            child: BannerWidget(),
+            child: BannerWidget(
+              manager: manager!,
+            ),
           ),
           const SizedBox(
             height: 21.0,
           ),
           ProductSection(
             manager: manager!,
-          )
+          ),
+          const SizedBox(
+            height: 21.0,
+          ),
         ],
       ),
     );

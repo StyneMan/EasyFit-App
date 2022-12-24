@@ -2,13 +2,11 @@ import 'package:easyfit_app/components/drawer/custom_drawer.dart';
 import 'package:easyfit_app/components/text_components.dart';
 import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:easyfit_app/helper/preference/preference_manager.dart';
-import 'package:easyfit_app/helper/state/state_manager.dart';
 import 'package:easyfit_app/screens/cart/cart.dart';
 import 'package:easyfit_app/screens/menu/components/listcomponent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/instance_manager.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class FoodMenu extends StatefulWidget {

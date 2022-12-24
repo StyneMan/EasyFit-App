@@ -1,7 +1,8 @@
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../components/text_components.dart';
+import '../../../helper/constants/constants.dart';
 
 class EmptyCart extends StatelessWidget {
   const EmptyCart({Key? key}) : super(key: key);
@@ -21,12 +22,15 @@ class EmptyCart extends StatelessWidget {
               height: MediaQuery.of(context).size.width * 0.40,
               padding: const EdgeInsets.all(36.0),
               color: Constants.accentColor,
-              child: SvgPicture.asset('assets/images/empty_cart.svg'),
+              child: SvgPicture.asset(
+                'assets/images/empty_cart.svg',
+                color: Constants.primaryColor,
+              ),
             ),
           ),
           const SizedBox(height: 16.0),
           TextPoppins(
-            text: 'Shopping cart empty',
+            text: 'Cart is empty',
             fontSize: 20,
             fontWeight: FontWeight.w500,
             color: Colors.black,

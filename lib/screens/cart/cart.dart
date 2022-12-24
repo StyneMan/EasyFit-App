@@ -14,7 +14,7 @@ import '../../helper/constants/constants.dart';
 import '../../helper/preference/preference_manager.dart';
 import '../../helper/state/state_manager.dart';
 import '../../model/cart/cart_model.dart';
-import '../delivery/delivery_mode.dart';
+import '../delivery/home_delivery.dart';
 import 'components/cart_item.dart';
 import 'components/empty_cart.dart';
 
@@ -39,6 +39,7 @@ class _CartState extends State<Cart> {
   final _user = FirebaseAuth.instance.currentUser;
   var _mStream;
   int _quantity = 1;
+  var _cartItems;
 
   @override
   void initState() {
@@ -107,8 +108,7 @@ class _CartState extends State<Cart> {
             manager: widget.manager,
           ),
         ),
-        body: _controller.userData.value['cart'] == null ||
-                (_controller.userData.value['cart'] ?? [])?.isEmpty
+        body: _controller.subTotalPrice.value == 0.0
             ? const Center(
                 child: EmptyCart(),
               )
@@ -153,6 +153,7 @@ class _CartState extends State<Cart> {
                         }
 
                         // final data = snapshot.requireData;
+                        _cartItems = snapshot.data?.get('cart');
 
                         return ListView.separated(
                           shrinkWrap: true,
@@ -161,8 +162,7 @@ class _CartState extends State<Cart> {
                             padding: const EdgeInsets.symmetric(vertical: 4.0),
                             child: CartItem(
                               model: CartModel.fromJson(
-                                snapshot.data?.get('cart')[i],
-                              ),
+                                  snapshot.data?.get('cart')[i]),
                             ),
                           ),
                           itemCount: snapshot.data?.get('cart')?.length,
@@ -173,20 +173,7 @@ class _CartState extends State<Cart> {
                         );
                       },
                     ),
-                    // ListView.separated(
-                    //   shrinkWrap: true,
-                    //   physics: const NeverScrollableScrollPhysics(),
-                    //   itemBuilder: (context, i) => CartItem(
-                    //     model: cartList[i],
-                    //     // data: listMap[0]['cart']![i],
-                    //   ),
-                    //   itemCount: cartList.length,
-                    //   separatorBuilder: (context, i) => const Divider(),
-                    // ),
-                    // : const EmptyCart(),
                     const SizedBox(height: 8),
-                    // (listMap.isNotEmpty || user.carts.isNotEmpty)
-                    //     ?
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -198,7 +185,7 @@ class _CartState extends State<Cart> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text(
-                                'Sub total',
+                                'Total',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -211,40 +198,6 @@ class _CartState extends State<Cart> {
                           ),
                           const SizedBox(height: 2),
                           const Divider(),
-                          const SizedBox(height: 2),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Text(
-                                'Delivery',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              Text(
-                                  '${Constants.nairaSign(context).currencySymbol} ${Constants.formatMoneyFloat(1200.00)}'),
-                            ],
-                          ),
-                          const SizedBox(height: 2),
-                          const Divider(),
-                          const SizedBox(height: 2),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Text(
-                                'Total',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Text(
-                                  '${Constants.nairaSign(context).currencySymbol} ${Constants.formatMoneyFloat(31200.00)}'),
-                            ],
-                          ),
                           const SizedBox(height: 24.0),
                           ClipRRect(
                             borderRadius:
@@ -256,7 +209,7 @@ class _CartState extends State<Cart> {
                                 onPressed: () {
                                   pushNewScreen(
                                     context,
-                                    screen: DeliveryMode(
+                                    screen: HomeDelivery(
                                       manager: widget.manager,
                                     ),
                                     withNavBar:
@@ -270,8 +223,8 @@ class _CartState extends State<Cart> {
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 style: TextButton.styleFrom(
+                                  backgroundColor: Constants.primaryColor,
                                   padding: const EdgeInsets.all(16.0),
-                                  primary: Constants.primaryColor,
                                 ),
                               ),
                             ),
@@ -294,8 +247,8 @@ class _CartState extends State<Cart> {
                               ),
                               child: TextButton(
                                 onPressed: () {
-                                  //listMap[0]['cart']![i]
-                                  // _cart.emptyCart(listMap[0]['cart']);
+                                  _controller.emptyCart(
+                                      _cartItems, _controller.currentUser?.uid);
                                 },
                                 child: const Text(
                                   'Empty cart',
@@ -331,26 +284,9 @@ class _CartState extends State<Cart> {
                         ],
                       ),
                     )
-                    // : const SizedBox(
-                    //     child: Center(
-                    //       child: CircularProgressIndicator(
-                    //         color: Constants.primaryColor,
-                    //       ),
-                    //     ),
-                    //     height: 200,
-                    //   ),
                   ],
                 ),
               ),
-        // : const EmptyCart()
-        // : const SizedBox(
-        //     child: Center(
-        //       child: CircularProgressIndicator(
-        //         color: Constants.primaryColor,
-        //       ),
-        //     ),
-        //     height: 256,
-        //   ),
       ),
     );
   }

@@ -1,21 +1,22 @@
 import 'dart:io';
 
-import 'package:easyfit_app/helper/state/state_manager.dart';
-import 'package:easyfit_app/screens/account/account.dart';
-import 'package:easyfit_app/screens/home/home.dart';
-import 'package:easyfit_app/screens/menu/menu.dart';
-import 'package:easyfit_app/screens/network/no_internet.dart';
-import 'package:easyfit_app/screens/orders/orders.dart';
-import 'package:easyfit_app/screens/plan/components/plan_dialog.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easyfit_app/helper/constants/constants.dart';
+import 'package:easyfit_app/helper/preference/preference_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:loading_overlay_pro/loading_overlay_pro.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/helper/preference/preference_manager.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+
+import '../../helper/state/state_manager.dart';
+import '../../screens/account/account.dart';
+import '../../screens/home/home.dart';
+import '../../screens/menu/menu.dart';
+import '../../screens/network/no_internet.dart';
+import '../../screens/orders/orders.dart';
+import '../../screens/plan/components/plan_dialog.dart';
 
 class Dashboard extends StatefulWidget {
   final PreferenceManager manager;
@@ -126,7 +127,7 @@ class _DashboardState extends State<Dashboard> {
                       duration: Duration(milliseconds: 200),
                     ),
                     navBarStyle: NavBarStyle
-                        .style6, // Choose the nav bar style with this property.
+                        .style7, // Choose the nav bar style with this property.
                   ),
                 ),
         ),
@@ -143,17 +144,17 @@ class _DashboardState extends State<Dashboard> {
         ),
         title: "Home",
         activeColorPrimary: Constants.primaryColor,
-        activeColorSecondary: Constants.primaryColor,
         inactiveColorPrimary: Colors.grey,
         inactiveColorSecondary: Colors.grey,
+        activeColorSecondary: Colors.white,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.hot_tub),
         title: "Orders",
         activeColorPrimary: Constants.primaryColor,
-        activeColorSecondary: Constants.primaryColor,
         inactiveColorPrimary: Colors.grey,
         inactiveColorSecondary: Colors.grey,
+        activeColorSecondary: Colors.white,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(
@@ -162,9 +163,9 @@ class _DashboardState extends State<Dashboard> {
         ),
         title: "Menu",
         activeColorPrimary: Constants.primaryColor,
-        activeColorSecondary: Constants.primaryColor,
         inactiveColorPrimary: Colors.grey,
         inactiveColorSecondary: Colors.grey,
+        activeColorSecondary: Colors.white,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(
@@ -173,9 +174,9 @@ class _DashboardState extends State<Dashboard> {
         ),
         title: ("Account"),
         activeColorPrimary: Constants.primaryColor,
-        activeColorSecondary: Constants.primaryColor,
         inactiveColorPrimary: Colors.grey,
         inactiveColorSecondary: Colors.grey,
+        activeColorSecondary: Colors.white,
       ),
     ];
   }

@@ -1,20 +1,50 @@
-import 'package:easyfit_app/components/drawer/custom_drawer.dart';
-import 'package:easyfit_app/components/text_components.dart';
-import 'package:easyfit_app/helper/constants/constants.dart';
-import 'package:easyfit_app/helper/preference/preference_manager.dart';
-import 'package:easyfit_app/model/orders/ordersmodel.dart';
-import 'package:easyfit_app/screens/cart/cart.dart';
-import 'package:easyfit_app/screens/orders/components/orders_row.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
-class Orders extends StatelessWidget {
+import '../../components/drawer/custom_drawer.dart';
+import '../../components/shimmer/cart_shimmer.dart';
+import '../../components/text_components.dart';
+import '../../helper/constants/constants.dart';
+import '../../helper/preference/preference_manager.dart';
+import '../../helper/state/state_manager.dart';
+import '../../model/orders/ordersmodel.dart';
+import '../cart/cart.dart';
+import 'components/orders_row.dart';
+
+class Orders extends StatefulWidget {
   final PreferenceManager manager;
   Orders({Key? key, required this.manager}) : super(key: key);
 
+  @override
+  State<Orders> createState() => _OrdersState();
+}
+
+class _OrdersState extends State<Orders> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool _isLoading = true;
+
+  final _controller = Get.find<StateController>();
+  final _user = FirebaseAuth.instance.currentUser;
+  var _mStream;
+  int _quantity = 1;
+  var _orderItems;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _isLoading = true;
+    });
+
+    _mStream =
+        FirebaseFirestore.instance.collection('users').doc("${_user?.uid}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +88,7 @@ class Orders extends StatelessWidget {
               pushNewScreen(
                 context,
                 withNavBar: true,
-                screen: Cart(manager: manager),
+                screen: Cart(manager: widget.manager),
               );
             },
             icon: Stack(
@@ -106,17 +136,86 @@ class Orders extends StatelessWidget {
       endDrawer: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: CustomDrawer(
-          manager: manager,
+          manager: widget.manager,
         ),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(0.0),
-        itemBuilder: (context, i) => OrdersRow(
-          order: ordersList[i],
-          manager: manager,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Wrap(
+          children: [
+            StreamBuilder<DocumentSnapshot>(
+              stream: _mStream.snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Something went wrong');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CartShimmer();
+                }
+                // print("JOLOS:: ${snapshot.data?.get('cart')}");
+                // onCounted(snapshot.data?.get('cart')?.length);
+
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.wifi_off_outlined,
+                            size: 72,
+                          ),
+                          TextRoboto(
+                            text: 'No data found',
+                            fontSize: 16,
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                // final data = snapshot.requireData;
+                _orderItems = snapshot.data?.get('orders');
+
+                return ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, i) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: OrdersRow(
+                      order:
+                          OrdersModel.fromJson(snapshot.data?.get('orders')[i]),
+                      manager: widget.manager,
+                    ),
+                    // CartItem(
+                    //   model: CartModel.fromJson(snapshot.data?.get('orders')[i]),
+                    // ),
+                  ),
+                  itemCount: snapshot.data?.get('orders')?.length,
+                  separatorBuilder: (context, i) => const Divider(
+                    color: Constants.primaryColor,
+                    thickness: 0.5,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
         ),
-        itemCount: ordersList.length,
       ),
+
+      // ListView.builder(
+      //   padding: const EdgeInsets.all(0.0),
+      //   itemBuilder: (context, i) => OrdersRow(
+      //     order: ordersList[i],
+      //     manager: widget.manager,
+      //   ),
+      //   itemCount: ordersList.length,
+      // ),
     );
   }
 }

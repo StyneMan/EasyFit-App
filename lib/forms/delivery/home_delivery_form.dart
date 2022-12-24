@@ -1,5 +1,7 @@
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:easyfit_app/helper/state/state_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 import '../../helper/constants/constants.dart';
@@ -20,7 +22,7 @@ class _HomeDeliveryFormState extends State<HomeDeliveryForm> {
   final TextEditingController _notesController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  // final _controller = Get.find<StateManager>();
+  final _controller = Get.find<StateController>();
   PreferenceManager? _prefManager;
   String _countryCode = "+234";
 
@@ -28,6 +30,12 @@ class _HomeDeliveryFormState extends State<HomeDeliveryForm> {
   void initState() {
     super.initState();
     _prefManager = PreferenceManager(context);
+    if (_controller.currentUser != null) {
+      // setState(() {
+      _nameController.text = _controller.currentUser!.displayName ?? "";
+      _phoneController.text = _controller.currentUser!.phoneNumber ?? "";
+      // });
+    }
   }
 
   @override
